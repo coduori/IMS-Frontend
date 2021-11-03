@@ -1,15 +1,9 @@
 import React from 'react'
-import Header from '../Layouts/Header'
-import Menu from '../Layouts/Menu'
-import Content from '../Layouts/Content'
-import Footer from '../Layouts/Footer'
+import Main from './Main'
 const Home = () => {
     return (
         <div className="wrapper">  
-            <Menu />
-            <Header />
-            <Content />
-            <Footer />
+            <Main />
             </div>
     )
 }
