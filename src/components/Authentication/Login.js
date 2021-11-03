@@ -2,10 +2,10 @@ import React from 'react'
 
 const Login = () => {
     return (
-        <div>
- <div className="login-box">
+        <div class="login-page">
+<div className="login-box">
   <div className="login-logo">
-    <a href="../../index2.html"><b>AquaR</b>LTE</a>
+    <a href="#"><b>AquaRose</b>Bank</a>
   </div>
   {/* /.login-logo */}
   <div className="card">
@@ -13,7 +13,7 @@ const Login = () => {
       <p className="login-box-msg">Sign in to start your session</p>
       <form action="../../index3.html" method="post">
         <div className="input-group mb-3">
-          <input type="email" className="form-control" placeholder="Email" />
+          <input type="text" className="form-control" placeholder="Username" />
           <div className="input-group-append">
             <div className="input-group-text">
               <span className="fas fa-envelope" />
@@ -30,12 +30,7 @@ const Login = () => {
         </div>
         <div className="row">
           <div className="col-8">
-            <div className="icheck-primary">
-              <input type="checkbox" id="remember" />
-              <label htmlFor="remember">
-                Remember Me
-              </label>
-            </div>
+
           </div>
           {/* /.col */}
           <div className="col-4">
@@ -44,22 +39,6 @@ const Login = () => {
           {/* /.col */}
         </div>
       </form>
-      <div className="social-auth-links text-center mb-3">
-        <p>- OR -</p>
-        <a href="#" className="btn btn-block btn-primary">
-          <i className="fab fa-facebook mr-2" /> Sign in using Facebook
-        </a>
-        <a href="#" className="btn btn-block btn-danger">
-          <i className="fab fa-google-plus mr-2" /> Sign in using Google+
-        </a>
-      </div>
-      {/* /.social-auth-links */}
-      <p className="mb-1">
-        <a href="forgot-password.html">I forgot my password</a>
-      </p>
-      <p className="mb-0">
-        <a href="register.html" className="text-center">Register a new membership</a>
-      </p>
     </div>
     {/* /.login-card-body */}
   </div>
