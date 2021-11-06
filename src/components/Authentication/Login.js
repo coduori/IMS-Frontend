@@ -1,8 +1,9 @@
 import React from 'react'
-
+import {Link} from 'react-router-dom'
 const Login = () => {
     return (
         <div class="login-page">
+
 <div className="login-box">
   <div className="login-logo">
     <a href="#"><b>AquaRose</b>Bank</a>
@@ -34,7 +35,7 @@ const Login = () => {
           </div>
           {/* /.col */}
           <div className="col-4">
-            <button type="submit" className="btn btn-primary btn-block">Sign In</button>
+           <Link to="/home"> <button type="submit" className="btn btn-primary btn-block">Sign In</button></Link>
           </div>
           {/* /.col */}
         </div>
