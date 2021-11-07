@@ -15,6 +15,17 @@ const IncidentEntry = () => {
         {/* Content Wrapper. Contains page content */}
         <div className="content-wrapper">
 
+        <div classname="content-header">
+  <div className="container-fluid">
+    <div className="row mb-2">
+
+    </div>{/* /.row */}
+</div>
+</div>
+
+        <div className="content">
+      <div className="container-fluid">
+            <div className="wrapper">
 
         <div class="card mx-3">
   <h5 class="card-header">Incident Entry</h5>
@@ -53,19 +64,19 @@ const IncidentEntry = () => {
                   <div className="row">
                   <div className="col">
                     <label >Incident Description</label>
-                    <input type="text" className="form-control" id="datepicker" />
+                    <textarea type="text" className="form-control" placeholder="Enter incident description here..." />
                   </div>
                 </div>
                 <div className="row">
                   <div className="col">
                     <label >Incident Action</label>
-                    <textarea type="text" className="form-control" placeholder="Incident Date" />
+                    <textarea type="text" className="form-control" placeholder="Enter incident action here" />
                   </div>
                 </div>
                 <div className="row">
                   <div className="col">
                     <label >Further action</label>
-                    <textarea type="text" className="form-control" placeholder="Incident Date" />
+                    <textarea type="text" className="form-control" placeholder="Entere further action on incident here" />
                   </div>
                 </div>
                 <div className="mb-4"></div>
@@ -78,6 +89,9 @@ const IncidentEntry = () => {
               </form>
   </div>
   <div className="card-footer"> </div>
+                </div>
+                </div>
+                </div>
                 </div>
 
             </div>

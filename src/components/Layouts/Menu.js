@@ -28,6 +28,24 @@ const Menu = () => {
           </Link>
         </li>
         <li className="nav-item">
+          <Link to="/add-branch" className="nav-link">
+            <i className="nav-icon fas fa-th" />
+            <p>
+              Add branches
+              {/* <span className="right badge badge-danger">New</span> */}
+            </p>
+          </Link>
+        </li>
+        <li className="nav-item">
+          <Link to="/add-incident" className="nav-link">
+            <i className="nav-icon fas fa-th" />
+            <p>
+              Add Incident Types
+              {/* <span className="right badge badge-danger">New</span> */}
+            </p>
+          </Link>
+        </li>
+        <li className="nav-item">
           <Link to="/home" className="nav-link">
             <i className="nav-icon fas fa-th" />
             <p>

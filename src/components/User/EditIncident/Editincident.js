@@ -14,7 +14,17 @@ const EditIncident = () => {
         <Menu />
         {/* Content Wrapper. Contains page content */}
         <div className="content-wrapper">
+        <div classname="content-header">
+  <div className="container-fluid">
+    <div className="row mb-2">
 
+    </div>{/* /.row */}
+</div>
+</div>
+
+        <div className="content">
+      <div className="container-fluid">
+            <div className="wrapper"></div>
 
         <div class="card mx-3">
   <h5 class="card-header">Incident Entry</h5>
@@ -83,11 +93,12 @@ const EditIncident = () => {
   </div>
   <div className="card-footer"> </div>
                 </div>
+                </div>
+                </div>
+
 
             </div>
 
-          {/* /.content */}
-        {/* /.content-wrapper */}
         <Footer />
 </div>
   );
