@@ -9,6 +9,7 @@ import ViewIncident from "./components/User/ViewIncident/ViewIncident";
 import AddBranch from "./components/User/AddBranch/AddBranch";
 import AddIncident from "./components/User/AddIncident/AddIncident";
 function App() {
+  
   return (
     <BrowserRouter>
       <Routes>
