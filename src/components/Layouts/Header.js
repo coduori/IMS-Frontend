@@ -1,6 +1,5 @@
 import React from "react";
-
-const Header = () => {
+const Header = (props) => {
   return (
     <div className="container">
       <nav className="main-header navbar navbar-expand navbar-white navbar-light">
@@ -10,12 +9,17 @@ const Header = () => {
             <a
               className="nav-link"
               data-widget="pushmenu"
-              href="#"
+              href="/home"
               role="button"
             >
               <i className="fas fa-bars" />
             </a>
           </li>
+        </ul>
+        <ul className="navbar-nav ml-auto">
+          
+        {localStorage.getItem("user name")}
+              
         </ul>
       </nav>
     </div>

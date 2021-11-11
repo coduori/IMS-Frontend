@@ -4,12 +4,12 @@ import Header from '../Layouts/Header'
 import Footer from '../Layouts/Footer'
 import IncidentTable from './IncidentEntry/IncidentTable'
 import {Link} from 'react-router-dom'
-const Home = () => {
+const Home = (props) => {
     return (
         <div className="wrapper">  
              <div>
              
-            <Header />
+            <Header loggedInUser={props.loggedInUser}/>
             <Menu />
   {/* Content Wrapper. Contains page content */}
   <div className="content-wrapper">
