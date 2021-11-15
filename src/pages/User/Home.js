@@ -1,7 +1,7 @@
 import React from 'react'
-import Menu from '../Layouts/Menu'
-import Header from '../Layouts/Header'
-import Footer from '../Layouts/Footer'
+import Footer from '../../components/Footer'
+import Header from '../../components/Header'
+import Menu from '../../components/Menu'
 import IncidentTable from './IncidentEntry/IncidentTable'
 import {Link} from 'react-router-dom'
 const Home = (props) => {
@@ -14,7 +14,7 @@ const Home = (props) => {
   {/* Content Wrapper. Contains page content */}
   <div className="content-wrapper">
     {/* Content Header (Page header) */}
- <div classname="content-header">
+ <div className="content-header">
   <div className="container-fluid">
     <div className="row mb-2">
       <div className="col-sm-12 mr-2">

@@ -1,10 +1,16 @@
 import { useNavigate } from "react-router"
-import React, {useState, useRef} from 'react'
-import axios from 'axios'
+import React, {useState, useRef, useContext} from 'react'
+import axios from 'axios';
+import UserContext from '../../store/UserContext';
+
+
+
 
 const Login = () => {
-  const [username,setUsername]=useState()
-  const [accessToken,setAccessToken]=useState()
+  const usercontext = useContext(UserContext);
+  const [username,setUsername]=useState();
+  const [accessToken,setAccessToken]=useState();
+  const [refreshToken,setRefreshToken]=useState();
   const emailRef = useRef();
   const passwordRef = useRef();
   const navigate = useNavigate();
@@ -12,31 +18,39 @@ const Login = () => {
   const attemptLogin = () => {
     const email=emailRef.current.value
     const password=passwordRef.current.value
-    var auth_url = 'http://localhost:3000/auth/users/login';
+    // var auth_url = 'http://auth-server:3000/auth/users/login';
+    var auth_url = `http://127.0.0.1:3000/auth/users/login`
     axios.post(auth_url, {
       email: email,
       password: password
-    }).then(function(response) {
+    })
+    .then(function(response) {
       return response.data
-    }).then(function(response) {
-      
-      localStorage.setItem("user name",response.user.name)
-      let accessToken=response.accessToken
-      let msg=response.msg
-      console.log((response.headers))
+    })
+    .then(function(responseData) {
+      console.log(responseData)
+      let msg=responseData.msg
+      // console.log((response.headers))
       if(msg==="Sucess"){
-      return navigate('/home')
+        usercontext.setIsLoggedIn(true);
+        usercontext.setUserName(responseData.user.name);
+        usercontext.setEmail(responseData.user.email);
+        usercontext.setAccessToken(responseData.accessToken);
+        usercontext.setRefreshToken(responseData.refreshToken);
+
+        return navigate('/home')
       }
       else{
         console.log('invalid credentials')
       }
     }).catch(function(error) {
-      message=error
-      console.log(error.response.status)
+      console.log(error)
+      // message=error
+      // console.log(error.response.status)
     });
   }
     return (
-        <div class="login-page">
+        <div className="login-page">
 
 <div className="login-box">
   <div className="login-logo">

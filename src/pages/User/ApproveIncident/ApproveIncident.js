@@ -1,9 +1,10 @@
 import React from 'react'
-import Menu from '../../Layouts/Menu'
-import Header from '../../Layouts/Header'
-import Footer from '../../Layouts/Footer'
+import Footer from '../../../components/Footer'
+import Header from '../../../components/Header'
+import Menu from '../../../components/Menu'
+import {Link} from 'react-router-dom'
 
-const ViewIncident = () => {
+const ApproveIncident = () => {
     return (
         <div >  
              <div>
@@ -80,9 +81,13 @@ const ViewIncident = () => {
       </p>
     </div>
     </div>
-
+    <div className="m-4">
+    <Link to="/home"><button type="submit" className="btn btn-xs btn-primary ">Approve</button></Link>
+    <Link to="/home"><button type="submit" className="ml-3 btn btn-xs btn-danger">Reject</button></Link>
+      </div>
   </div>
 </div>
+
 
       </div>
       {/* /.container-fluid */}
@@ -90,11 +95,11 @@ const ViewIncident = () => {
     {/* /.content */}
   </div>
   {/* /.content-wrapper */}
+ 
 </div>
 <Footer />
-
             </div>
     )
 }
 
-export default ViewIncident
+export default ApproveIncident

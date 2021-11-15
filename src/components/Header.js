@@ -1,5 +1,17 @@
-import React from "react";
+import {useContext} from 'react';
+import UserContext from '../store/UserContext';
+
 const Header = (props) => {
+
+  const usercontext = useContext(UserContext);
+  const isLoggedIn = usercontext.isLoggedIn;
+
+  let username = (usercontext.name == null) ? "" : usercontext.name.split(' ')[0]
+
+  // if (usercontext.name == null) username = "";
+  // else username = usercontext.name.split(' ')[0];
+  
+
   return (
     <div className="container">
       <nav className="main-header navbar navbar-expand navbar-white navbar-light">
@@ -18,7 +30,7 @@ const Header = (props) => {
         </ul>
         <ul className="navbar-nav ml-auto">
           
-        {localStorage.getItem("user name")}
+        {username}
               
         </ul>
       </nav>

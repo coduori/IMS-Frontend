@@ -1,13 +1,13 @@
-import Login from "./components/Authentication/Login";
-import Home from "./components/User/Home";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import IncidentEntry from "./components/User/IncidentEntry/IncidentEntry";
-import EditIncident from "./components/User/EditIncident/Editincident";
-import ApproveIncident from "./components/User/ApproveIncident/ApproveIncident";
-import UpdateIncident from "./components/User/UpdateIncident/UpdateIncident";
-import ViewIncident from "./components/User/ViewIncident/ViewIncident";
-import AddBranch from "./components/User/AddBranch/AddBranch";
-import AddIncident from "./components/User/AddIncident/AddIncident";
+import Login from "./pages/Authentication/Login";
+import Home from "./pages/User/Home";
+import IncidentEntry from "./pages/User/IncidentEntry/IncidentEntry";
+import EditIncident from "./pages/User/EditIncident/Editincident";
+import ApproveIncident from "./pages/User/ApproveIncident/ApproveIncident";
+import UpdateIncident from "./pages/User/UpdateIncident/UpdateIncident";
+import ViewIncident from "./pages/User/ViewIncident/ViewIncident";
+import AddBranch from "./pages/User/AddBranch/AddBranch";
+import AddIncident from "./pages/User/AddIncident/AddIncident";
 function App() {
   
   return (

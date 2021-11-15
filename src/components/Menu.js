@@ -1,7 +1,52 @@
-import React from 'react'
+import {React, useContext} from 'react'
 import {Link} from 'react-router-dom'
+import {useNavigate} from 'react-router'
+import UserContext from '../store/UserContext';
+import axios from 'axios'
+
 
 const Menu = () => {
+
+  const usercontext = useContext(UserContext);
+  const navigate = useNavigate();
+
+
+  const logoutUser = () => {
+    // const refreshToken= localStorage.getItem("refreshToken")
+    const refreshToken = usercontext.refreshToken;
+    const accessToken = usercontext.accessToken;
+    const options = {
+      headers: {
+        "content-type": "application/json",
+        "authorization": `Bearer ${refreshToken} ${accessToken}`
+      }
+    }
+    let logout_url = 'http://localhost:3000/auth/users/logout';
+    axios.post(logout_url, options)
+      .then(function(response) {
+        return response.data
+      })
+      .then(function(responseData) {
+          console.log(responseData)
+          if(responseData.msg==="Sucess"){
+            usercontext.setIsLoggedIn(false);
+            usercontext.setUserName('');
+            usercontext.setEmail('');
+            usercontext.setAccessToken('');
+            usercontext.setRefreshToken('');
+
+            return navigate('/')
+          }
+          else{
+            console.log('invalid credentials')
+            return navigate('/');
+          }
+        })
+        .catch(function(error) {
+          console.log(error.response.status)
+        });
+  }
+
     return (
 <>
 {/* Main Sidebar Container */}
@@ -62,12 +107,10 @@ const Menu = () => {
           </Link>
         </li>
         <li className="nav-item">
-          <Link to="/"className="nav-link">
             <i className="nav-icon fas fa-th" />
-            <p>
+            <p onClick={logoutUser}>
               Logout
             </p>
-          </Link>
         </li>
       </ul>
     </nav>

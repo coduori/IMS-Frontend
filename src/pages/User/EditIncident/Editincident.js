@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import Menu from "../../Layouts/Menu";
-import Header from "../../Layouts/Header";
-import Footer from "../../Layouts/Footer";
+import Footer from '../../../components/Footer'
+import Header from '../../../components/Header'
+import Menu from '../../../components/Menu'
 import {Link} from 'react-router-dom'
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
