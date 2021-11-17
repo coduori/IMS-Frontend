@@ -1,7 +1,12 @@
 
 import React from 'react'
 import {Link} from 'react-router-dom'
-const IncidentTable = () => {
+import IncidentTableRow from '../../../components/IncidentTableRow';
+
+const IncidentTable = (props) => {
+
+  const loadedIncidents = props.incidentsData;
+  console.log(loadedIncidents)
     return (
       <>
         <div className="card">
@@ -13,7 +18,6 @@ const IncidentTable = () => {
               <thead>
                 <tr>
                   <th scope="col">No</th>
-                  <th scope="col">Incident ID</th>
                   <th scope="col">Incident</th>
                   <th scope="col">Recorded By</th>
                   <th scope="col">Branch</th>
@@ -25,111 +29,16 @@ const IncidentTable = () => {
                 </tr>
               </thead>
               <tbody>
-              <tr>
-                  <th scope="row">1</th>
-                  <th scope="row">Fir-CAPE-1201001</th>
-                  <td>The faulty water heater on the second floor corridor caught fire. The fire started when an intern from the finance department  turned it on to fetch water.</td>
-                  <td>K. Jabulani</td>
-                  <td>Cape Town</td>
-                  <td>Fire</td>
-                  <td>Phill Chase - Branch Manager</td>
-                  <td>12-Jan-2021</td>
-                  <td>Draft</td>
-                  <td Style='white-space: nowrap'>  
-                    <Link to="/edit-incident"><button type="submit" className="btn btn-xs btn-primary ">Edit</button></Link>
-                    <button type="submit" className="ml-3 btn btn-xs btn-danger">Delete</button>
-                  </td>
-                </tr>
-                <tr>
-                  <th scope="row">2</th>
-                  <th scope="row">Fir-CAPE-1201001</th>
-                  <td>The faulty water heater on the second floor corridor caught fire. The fire started when an intern from the finance department  turned it on to fetch water.</td>
-                  <td>K. Jabulani</td>
-                  <td>Cape Town</td>
-                  <td>Fire</td>
-                  <td>Phill Chase - Branch Manager</td>
-                  <td>12-Jan-2021</td>
-                  <td>Pending Approval</td>
-                  <td>  
-                  <Link to="/approve-incident"><button type="submit" className="btn btn-xs btn-primary ">view</button></Link>
-                  </td>
-                </tr>
-                <tr>
-                  <th scope="row">3</th>
-                  <th scope="row">Fir-CAPE-1201001</th>
-                  <td>The faulty water heater on the second floor corridor caught fire. The fire started when an intern from the finance department  turned it on to fetch water.</td>
-                  <td>K. Jabulani</td>
-                  <td>Cape Town</td>
-                  <td>Fire</td>
-                  <td>Phill Chase - Branch Manager</td>
-                  <td>12-Jan-2021</td>
-                  <td>Open</td>
-                  <td Style='white-space: nowrap'>  
-                  <Link to="/update-incident"><button type="submit" className="btn btn-xs btn-primary mr-3">Update</button></Link>
-                  <button type="submit" className="btn btn-xs btn-success">Close</button>
-                  </td>
-                </tr>
-                <tr>
-                  <th scope="row">4</th>
-                  <th scope="row">Fir-CAPE-1201001</th>
-                  <td>The faulty water heater on the second floor corridor caught fire. The fire started when an intern from the finance department  turned it on to fetch water.</td>
-                  <td>K. Jabulani</td>
-                  <td>Cape Town</td>
-                  <td>Fire</td>
-                  <td>Phill Chase - Branch Manager</td>
-                  <td>12-Jan-2021</td>
-                  <td>Open</td>
-                  <td Style='white-space: nowrap'>  
-                  <Link to="/update-incident"><button type="submit" className="btn btn-xs btn-primary mr-3">Update</button></Link>
-                  <button type="submit" className="btn btn-xs btn-success ">Close</button>
-                  </td>
-                </tr>
-                <tr>
-                  <th scope="row">5</th>
-                  <th scope="row">Fir-CAPE-1201001</th>
-                  <td>The faulty water heater on the second floor corridor caught fire. The fire started when an intern from the finance department  turned it on to fetch water.</td>
-                  <td>K. Jabulani</td>
-                  <td>Cape Town</td>
-                  <td>Fire</td>
-                  <td>Phill Chase - Branch Manager</td>
-                  <td>12-Jan-2021</td>
-                  <td>Closed</td>
-                  <td Style='white-space: nowrap'>  
-                    <Link to="/view-incident"><button type="submit" className="btn btn-xs btn-primary ">View</button></Link>
-                                   </td>
-                </tr>
-                <tr>
-                  <th scope="row">6</th>
-                  <th scope="row">Fir-CAPE-1201001</th>
-                  <td>The faulty water heater on the second floor corridor caught fire. The fire started when an intern from the finance department  turned it on to fetch water.</td>
-                  <td>K. Jabulani</td>
-                  <td>Cape Town</td>
-                  <td>Fire</td>
-                  <td>Phill Chase - Branch Manager</td>
-                  <td>12-Jan-2021</td>
-                  <td>Closed</td>
-                  <td Style='white-space: nowrap'>  
-                  <Link to="/view-incident"><button type="submit" className="btn btn-xs btn-primary ">View</button></Link>
-                  </td>
-                </tr>
-                <tr>
-                  <th scope="row">7</th>
-                  <th scope="row">Fir-CAPE-1201001</th>
-                  <td>The faulty water heater on the second floor corridor caught fire. The fire started when an intern from the finance department  turned it on to fetch water.</td>
-                  <td>K. Jabulani</td>
-                  <td>Cape Town</td>
-                  <td>Fire</td>
-                  <td>Phill Chase - Branch Manager</td>
-                  <td>12-Jan-2021</td>
-                  <td>Closed</td>
-                  <td Style='white-space: nowrap'>  
-                  <Link to="/view-incident"><button type="submit" className="btn btn-xs btn-primary ">View</button></Link>
-                  </td>
-                </tr>
+              {
+                loadedIncidents.map((loadedIncident, index) => {
+                    console.log(loadedIncident)
+                    return <IncidentTableRow incident={loadedIncident} key={loadedIncident.id} num={index}/>
+                })
+              }
               </tbody>
           </table>
           </div> 
-          <div className="modal fade" id="exampleModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
+          {/* <div className="modal fade" id="exampleModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div className="modal-dialog">
                 <div className="modal-content">
                 <div className="modal-header">
@@ -145,7 +54,27 @@ const IncidentTable = () => {
                 </div>
                 </div>
             </div>
+            </div> */}
+
+          <div className="modal fade" id="delete_modal">
+            <div className="modal-dialog" role="document">
+              <div className="modal-content">
+                <div className="modal-header">
+                    <h5 className="modal-title">Delete Incident</h5>
+                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"></span>
+                    </button>
+                </div>
+                <div className="modal-body">
+                    <p>Are you sure you want to delete this incident?</p>
+                </div>
+                <div className="modal-footer">
+                        <button className="btn btn btn-primary" >Confirm Delete</button>
+                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" data-target="#delete_modal">Close</button>
+                </div>
+              </div>
             </div>
+          </div>
         </div>
  
 

@@ -8,12 +8,14 @@ import Menu from '../../../components/Menu'
 import ActionComponent from '../../../components/ActionComponent'
 import DatePicker from "react-datepicker";
 import UserContext from '../../../store/UserContext';
+import IncidentsContext from "../../../store/IncidentsContext";
 
 
 
 const IncidentEntry = () => {
   const navigate = useNavigate();
   const usercontext = useContext(UserContext);
+  const incidentscontext = useContext(IncidentsContext);
   const [incidentDate, setIncidentDate] = useState(new Date());
   const branchRef = useRef();
   const alertedByRef = useRef();
@@ -88,14 +90,13 @@ const IncidentEntry = () => {
               // usercontext.setJwt("");
               // usercontext.setIsLoggedIn(false);
               // localStorage.clear();
-
-              return navigate('/home')
-              
           }
           return response.json();
       })
       .then(responseData => {
           console.log(responseData);
+          incidentscontext.setIncidents(responseData.incidentRecords);
+          return navigate('/home');
       })
       .catch(e => {
           console.log(e);
@@ -126,9 +127,9 @@ const IncidentEntry = () => {
                       <div className="col">
                         <select className="form-select form-control" aria-label="Default select example" ref={branchRef}>
                           <option defaultValue>Cape Town</option>
-                          <option value="1">Kimberly</option>
-                          <option value="2">JohannesBurg</option>
-                          <option value="3">Dubarn</option>
+                          <option value="Kimberly">Kimberly</option>
+                          <option value="JohannesBurg">Johannesburg</option>
+                          <option value="Dubarn">Dubarn</option>
                         </select>
                       </div>
                       <div className="col">
@@ -142,9 +143,9 @@ const IncidentEntry = () => {
                       <div className="col">
                         <select className="form-select form-control" aria-label="Default select example" ref={incidentTypeRef}>
                           <option defaultValue>Fire</option>
-                          <option value="1">Fraud</option>
-                          <option value="2">Identity Theft</option>
-                          <option value="3">Earth Quake</option>
+                          <option value="Fraud">Fraud</option>
+                          <option value="Theft">Theft</option>
+                          <option value="Vandalism">Vandalism</option>
                         </select>
                       </div>
                     </div>

@@ -8,13 +8,17 @@ import UpdateIncident from "./pages/User/UpdateIncident/UpdateIncident";
 import ViewIncident from "./pages/User/ViewIncident/ViewIncident";
 import AddBranch from "./pages/User/AddBranch/AddBranch";
 import AddIncident from "./pages/User/AddIncident/AddIncident";
+import {IncidentsContextProvider} from "./store/IncidentsContext";
+import { IncidentTypesContextProvider } from "./store/IncidentTypesContext";
 function App() {
   
   return (
+    <IncidentsContextProvider>
     <BrowserRouter>
       <Routes>
         <Route exact path="/home" element={<Home />} />
         <Route exact path="/" element={<Login />} />
+        {/* <Route exact path="/" element={<Home />} /> */}
         <Route exact path="/approve-incident" element={<ApproveIncident />} />
         <Route exact path="/edit-incident" element={<EditIncident/>} />
         <Route exact path="/incident-entry" element={<IncidentEntry />} />
@@ -24,6 +28,7 @@ function App() {
         <Route exact path="/view-incident" element={<ViewIncident />} />
       </Routes>
     </BrowserRouter>
+    </IncidentsContextProvider>
   );
 }
 
