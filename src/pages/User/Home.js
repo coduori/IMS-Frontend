@@ -1,16 +1,22 @@
 import {React, useEffect, useContext} from 'react';
 import { useNavigate } from "react-router"
+import {Link} from 'react-router-dom'
+
 import Footer from '../../components/Footer'
 import Header from '../../components/Header'
 import Menu from '../../components/Menu'
 import IncidentTable from './IncidentEntry/IncidentTable'
-import {Link} from 'react-router-dom'
+
 import UserContext from '../../store/UserContext'
 import IncidentsContext from '../../store/IncidentsContext';
+import IncidentTypesContext from '../../store/IncidentTypesContext';
+import BranchesContext from '../../store/BranchesContext';
 const Home = (props) => {
   const navigate = useNavigate();
   const usercontext = useContext(UserContext);
   const incidentscontext = useContext(IncidentsContext);
+  const incidenttypescontext = useContext(IncidentTypesContext);
+  const branchescontext = useContext(BranchesContext);
 
   useEffect(() => {
     const options = {
@@ -35,6 +41,9 @@ const Home = (props) => {
     .then(responseData => {
       console.log(responseData);
       incidentscontext.setIncidents(responseData.incidentRecords);
+      branchescontext.setBranches(responseData.branches);
+      incidenttypescontext.setIncidentTypes(responseData.incident_types);
+
     })
     .catch (err => {
         console.log("Err");
@@ -42,6 +51,14 @@ const Home = (props) => {
     });
   },
   []);
+
+  function deleteIncident (incident_id) {
+
+  }
+
+  function approveIncident (incident_id) {
+
+  }
 
   return (
     <div className="wrapper">  
@@ -63,7 +80,11 @@ const Home = (props) => {
           <div className="content"> {/* /.content-header */}  {/* Main content */}
             <div className="container-fluid">
               <div className="wrapper">
-                <IncidentTable incidentsData={incidentscontext.incidents}/>
+                <IncidentTable 
+                incidentsData={incidentscontext.incidents}
+                approveIncident={approveIncident}
+                deleteIncident={deleteIncident}
+                />
 
                 {/* <!-- Tabs navs --> */}
                 {/* <ul class="nav nav-tabs mb-3" id="ex1" role="tablist">

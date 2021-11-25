@@ -7,44 +7,126 @@ import axios from 'axios'
 
 const Menu = () => {
 
+
+  let user = {
+    _id: "2",
+    first_name: "Claude",
+    last_name: "Oduori",
+    email: "claude@gmail.com"
+}
+
+const userRolesObject = [{
+  _id: "1",
+  user_id: "2",
+  role_id: "1",
+},{
+  _id: "2",
+  user_id: "2",
+  role_id: "3",
+}, {
+  _id: "3",
+  user_id: "2",
+  role_id: "4",
+}, {
+  _id: "4",
+  user_id: "2",
+  role_id: "4",
+}, {
+  _id: "5",
+  user_id: "2",
+  role_id: "5",
+}, {
+  _id: "6",
+  user_id: "2",
+  role_id: "6",
+}, {
+  _id: "7",
+  user_id: "2",
+  role_id: "7",
+}]
+
+const rolesObject = [{
+    _id: "1",
+    role_code: "IMS_ASSIGN_ROLES",
+    system_id: "2"
+}, {
+    _id: "2",
+    role_code: "IMS_CHECK_INCIDENT",
+    system_id: "2"
+}, {
+    _id: "3",
+    role_code: "IMS_RECORD_INCIDENT",
+    system_id: "2"
+}, {
+    _id: "4",
+    role_code: "MAIN_MANAGE_BRANCHES",
+    system_id: "1"
+}, {
+    _id: "5",
+    role_code: "IMS_MANAGE_INCIDENT_TYPES",
+    system_id: "1"
+}, {
+    _id: "6",
+    role_code: "MAIN_MANAGE_USERS",
+    system_id: "1"
+}, {
+  _id: "7",
+  role_code: "IMS_VIEW_REPORTS",
+  system_id: "2"
+}]
+
+const systemsObject = [{
+    _id: "1",
+    sytem_name: "Main Bank System",
+    sytem_code: "MAIN"
+},{
+    _id: "2",
+    sytem_name: "Incidents Management System",
+    sytem_code: "IMS"
+}]
+
+
+
+  // const obj = rolesObject.find(({role_code}) => role_code == 'MAIN_MANAGE_USERS')
+  // const isFound = userRolesObject.some((user_role) => user_role.role_id === obj._id)
+  // console.log(isFound)
+
   const usercontext = useContext(UserContext);
   const navigate = useNavigate();
 
 
-  const logoutUser = () => {
+  const logoutUser = (event) => {
+    event.preventDefault()
     // const refreshToken= localStorage.getItem("refreshToken")
     const refreshToken = usercontext.refreshToken;
     const accessToken = usercontext.accessToken;
     const options = {
+      method: 'POST',
       headers: {
-        "content-type": "application/json",
-        "authorization": `Bearer ${refreshToken} ${accessToken}`
-      }
-    }
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${usercontext.refreshToken} ${usercontext.accessToken}`
+      },
+  };
     let logout_url = 'http://localhost:3000/auth/users/logout';
-    axios.post(logout_url, options)
-      .then(function(response) {
-        return response.data
+    fetch(logout_url, options)
+      .then(response => {
+          if (!response.ok) {
+              throw Error(response.status);
+          }
+          return response.json();
       })
-      .then(function(responseData) {
-          console.log(responseData)
-          if(responseData.msg==="Sucess"){
-            usercontext.setIsLoggedIn(false);
-            usercontext.setUserName('');
-            usercontext.setEmail('');
-            usercontext.setAccessToken('');
-            usercontext.setRefreshToken('');
-
-            return navigate('/')
-          }
-          else{
-            console.log('invalid credentials')
-            return navigate('/');
-          }
-        })
-        .catch(function(error) {
-          console.log(error.response.status)
-        });
+      .then(responseData => {
+          console.log(responseData);
+          usercontext.setIsLoggedIn(false);
+          usercontext.setUserName('');
+          usercontext.setEmail('');
+          usercontext.setAccessToken('');
+          usercontext.setRefreshToken('');
+          return navigate('/');
+      })
+      .catch(e => {
+          console.log(e);
+      });
   }
 
     return (
@@ -73,44 +155,60 @@ const Menu = () => {
           </Link>
         </li>
         <li className="nav-item">
-          <Link to="/add-branch" className="nav-link">
+          {userRolesObject.some((user_role) => user_role.role_id === rolesObject.find(({role_code}) => role_code == 'MAIN_MANAGE_BRANCHES')._id)
+          ?
+          <Link to="/manage-branch" className="nav-link">
             <i className="nav-icon fas fa-th" />
             <p>
-              Add branches
+              Manage branches
               {/* <span className="right badge badge-danger">New</span> */}
             </p>
           </Link>
+
+          : null }
         </li>
         <li className="nav-item">
-          <Link to="/add-incident" className="nav-link">
+        {userRolesObject.some((user_role) => user_role.role_id === rolesObject.find(({role_code}) => role_code == 'IMS_MANAGE_INCIDENT_TYPES')._id)
+          ?
+          <Link to="/manage-incident" className="nav-link">
             <i className="nav-icon fas fa-th" />
             <p>
-              Add Incident Types
+              Manage Incident Types
               {/* <span className="right badge badge-danger">New</span> */}
             </p>
           </Link>
+          : null }
+          
         </li>
         <li className="nav-item">
+        {userRolesObject.some((user_role) => user_role.role_id === rolesObject.find(({role_code}) => role_code == 'IMS_VIEW_REPORTS')._id)
+          ?
           <Link to="/home" className="nav-link">
             <i className="nav-icon fas fa-th" />
             <p>
               View Reports
             </p>
           </Link>
+          : null }
+          
         </li>
         <li className="nav-item">
-          <Link to="/" className="nav-link">
+        {userRolesObject.some((user_role) => user_role.role_id === rolesObject.find(({role_code}) => role_code == 'MAIN_MANAGE_USERS')._id)
+        || userRolesObject.some((user_role) => user_role.role_id === rolesObject.find(({role_code}) => role_code == 'IMS_ASSIGN_ROLES')._id)
+        || userRolesObject.some((user_role) => user_role.role_id === rolesObject.find(({role_code}) => role_code == 'MAIN_ASSIGN_ROLES')._id)
+          ?
+          <Link to="/admin/users" className="nav-link">
             <i className="nav-icon fas fa-th" />
             <p>
-              Manage Roles
+              Admin module
             </p>
           </Link>
+          : null }
         </li>
         <li className="nav-item">
-            <i className="nav-icon fas fa-th" />
-            <p onClick={logoutUser}>
-              Logout
-            </p>
+          <button className="nav-link" onClick={logoutUser}>
+            Logout
+          </button>
         </li>
       </ul>
     </nav>

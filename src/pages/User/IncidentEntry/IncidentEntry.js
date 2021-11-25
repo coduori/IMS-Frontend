@@ -1,27 +1,45 @@
 import React, {useState, useRef, useContext} from "react";
-import { useNavigate } from "react-router"
-import Footer from '../../../components/Footer'
-import {Link} from 'react-router-dom'
-import "react-datepicker/dist/react-datepicker.css";
+import { useNavigate } from "react-router";
+import moment from "moment";
+
+import Footer from '../../../components/Footer';
 import Header from '../../../components/Header'
 import Menu from '../../../components/Menu'
-import ActionComponent from '../../../components/ActionComponent'
-import DatePicker from "react-datepicker";
+import ActionComponent from '../../../components/Incidents/ActionComponent'
+
 import UserContext from '../../../store/UserContext';
 import IncidentsContext from "../../../store/IncidentsContext";
+import IncidentTypesContext from '../../../store/IncidentTypesContext';
+import BranchesContext from '../../../store/BranchesContext';
 
-
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const IncidentEntry = () => {
   const navigate = useNavigate();
   const usercontext = useContext(UserContext);
   const incidentscontext = useContext(IncidentsContext);
+  const incidenttypescontext = useContext(IncidentTypesContext);
+  const branchescontext = useContext(BranchesContext);
+
   const [incidentDate, setIncidentDate] = useState(new Date());
+
   const branchRef = useRef();
   const alertedByRef = useRef();
   const incidentTypeRef = useRef();
   const incidentDescriptionRef = useRef();
   const actionsRef = useRef();
+
+  const incidentactions = [
+    {
+    type: 'ACTION',
+    description: ''
+  },
+  {
+    type: 'FURTHER_ACTION',
+    description: ''
+  } 
+  ]
 
   function submitIncidentHandler (event) {
     event.preventDefault();
@@ -47,19 +65,6 @@ const IncidentEntry = () => {
        : null;
       actionsPayload.push(actionPayload);
     });
-    
-    // if(enteredIncidentAction !== '' && enteredIncidentFurtherAction !== ''){
-    //   payloadActions = [
-    //     {type: 'ACTION', description: enteredIncidentAction},
-    //     {type: 'FURTHER_ACTION', description: enteredIncidentFurtherAction}
-    // ]
-    // } else if (enteredIncidentAction !== '' && enteredIncidentFurtherAction == '') {
-    //   payloadActions = [
-    //     {type: 'ACTION', description: enteredIncidentAction}
-    // ]
-    // } else {
-    //   payloadActions = []
-    // }
 
     const postData = {
         branch_id: enteredBranch,
@@ -71,8 +76,7 @@ const IncidentEntry = () => {
         actions: actionsPayload
     };
 
-    console.log(JSON.stringify(postData));
-    console.log(usercontext);
+    console.log(postData)
 
     const options = {
         method: 'POST',
@@ -85,17 +89,13 @@ const IncidentEntry = () => {
     let add_incident_url = 'http://localhost:3005/incidents/add';
     fetch(add_incident_url, options)
       .then(response => {
-          console.log(response.status);
-          if (response.status === 403) {
-              // usercontext.setJwt("");
-              // usercontext.setIsLoggedIn(false);
-              // localStorage.clear();
-          }
+          if (!response.ok) {
+            throw Error(response.status);
+        }
           return response.json();
       })
       .then(responseData => {
           console.log(responseData);
-          incidentscontext.setIncidents(responseData.incidentRecords);
           return navigate('/home');
       })
       .catch(e => {
@@ -126,10 +126,10 @@ const IncidentEntry = () => {
                     <div className="row mb-4">
                       <div className="col">
                         <select className="form-select form-control" aria-label="Default select example" ref={branchRef}>
-                          <option defaultValue>Cape Town</option>
-                          <option value="Kimberly">Kimberly</option>
-                          <option value="JohannesBurg">Johannesburg</option>
-                          <option value="Dubarn">Dubarn</option>
+                          <option defaultValue>Select branch</option>
+                          {branchescontext.branches.map((branch) => {
+                            return <option value={branch._id}>{branch.branch_code}</option>
+                          })}
                         </select>
                       </div>
                       <div className="col">
@@ -138,14 +138,23 @@ const IncidentEntry = () => {
                     </div>
                     <div className="row mb-5">
                       <div className="col">
-                        <DatePicker selected={incidentDate} onChange={(date) => setIncidentDate(date)} className="form-control"/>
+                        <DatePicker 
+                        selected={incidentDate}
+                        onChange={(date) => setIncidentDate(date)}
+                        minDate={new Date(moment().subtract(1, 'months').format())}
+                        maxDate={new Date()}
+                        className="form-control"/>
                       </div>
                       <div className="col">
                         <select className="form-select form-control" aria-label="Default select example" ref={incidentTypeRef}>
-                          <option defaultValue>Fire</option>
+                          <option defaultValue>Select Incident Type</option>
+                          {incidenttypescontext.incident_types.map((incident_type) => {
+                            return <option value={incident_type.id}>{incident_type.incident_type}</option>
+                          })}
+                          {/* <option defaultValue>Fire</option>
                           <option value="Fraud">Fraud</option>
                           <option value="Theft">Theft</option>
-                          <option value="Vandalism">Vandalism</option>
+                          <option value="Vandalism">Vandalism</option> */}
                         </select>
                       </div>
                     </div>
@@ -156,8 +165,13 @@ const IncidentEntry = () => {
                       </div>
                     </div>
                     <div className="incident_actions mb-4" ref={actionsRef}>
-                      <ActionComponent action_class="inc-action"/>
-                      <ActionComponent action_class="inc-action inc-further-action"/>
+                      {incidentactions.map(action => {
+                        return action.type === 'ACTION'
+                        ? <ActionComponent action_class="inc-action" action_label="Action" action ={action}/>
+                        : action.type === 'FURTHER_ACTION'
+                        ? <ActionComponent action_class="inc-action inc-further-action" action_label="Further Action" action ={action}/>
+                        : null
+                      })}     
                     </div>
                     <div className="row ">
                       <div className="mr-auto">

@@ -10,24 +10,36 @@ import AddBranch from "./pages/User/AddBranch/AddBranch";
 import AddIncident from "./pages/User/AddIncident/AddIncident";
 import {IncidentsContextProvider} from "./store/IncidentsContext";
 import { IncidentTypesContextProvider } from "./store/IncidentTypesContext";
+import { BranchesContextProvider } from "./store/BranchesContext";
+import ManageUsers from "./pages/User/Admin/ManageUsers";
+import AddUser from "./pages/User/Admin/AddUser";
+import EditUser from "./pages/User/Admin/EditUser";
+
 function App() {
   
   return (
     <IncidentsContextProvider>
-    <BrowserRouter>
-      <Routes>
-        <Route exact path="/home" element={<Home />} />
-        <Route exact path="/" element={<Login />} />
-        {/* <Route exact path="/" element={<Home />} /> */}
-        <Route exact path="/approve-incident" element={<ApproveIncident />} />
-        <Route exact path="/edit-incident" element={<EditIncident/>} />
-        <Route exact path="/incident-entry" element={<IncidentEntry />} />
-        <Route exact path="/update-incident" element={<UpdateIncident />} />
-        <Route exact path="/add-branch" element={<AddBranch />} />
-        <Route exact path="/add-incident" element={<AddIncident />} />
-        <Route exact path="/view-incident" element={<ViewIncident />} />
-      </Routes>
-    </BrowserRouter>
+    <IncidentTypesContextProvider>
+    <BranchesContextProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route exact path="/home" element={<Home />} />
+          <Route exact path="/" element={<Login />} />
+          {/* <Route exact path="/" element={<Home />} /> */}
+          <Route exact path="/approve-incident" element={<ApproveIncident />} />
+          <Route exact path="/edit-incident/:incidentid" element={<EditIncident/>} />
+          <Route exact path="/incident-entry" element={<IncidentEntry />} />
+          <Route path="/update-incident/:incidentid" element={<UpdateIncident />} />
+          <Route exact path="/manage-branch" element={<AddBranch />} />
+          <Route exact path="/manage-incident" element={<AddIncident />} />
+          <Route exact path="/view-incident/:incidentid" element={<ViewIncident />} />
+          <Route exact path="/admin/users" element={<ManageUsers />} />
+          <Route exact path="/admin/users/add/" element={<AddUser />} />
+          <Route exact path="/admin/users/edit/:userid" element={<EditUser />} />
+        </Routes>
+      </BrowserRouter>
+    </BranchesContextProvider>
+    </IncidentTypesContextProvider>
     </IncidentsContextProvider>
   );
 }

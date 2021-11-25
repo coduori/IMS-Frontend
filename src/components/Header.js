@@ -4,7 +4,6 @@ import UserContext from '../store/UserContext';
 const Header = (props) => {
 
   const usercontext = useContext(UserContext);
-  const isLoggedIn = usercontext.isLoggedIn;
 
   let username = (usercontext.name == null) ? "" : usercontext.name.split(' ')[0]
 
@@ -31,7 +30,7 @@ const Header = (props) => {
         <ul className="navbar-nav ml-auto">
           
         {username}
-              
+      
         </ul>
       </nav>
     </div>

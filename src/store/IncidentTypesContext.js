@@ -16,7 +16,7 @@ export function IncidentTypesContextProvider (props) {
     }
 
     const context = {
-        incidentTypes: incidentTypes,
+        incident_types: incidentTypes,
         setIncidentTypes: setIncidentTypesHandler,
     }
 

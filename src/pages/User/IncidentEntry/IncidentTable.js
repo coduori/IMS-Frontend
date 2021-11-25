@@ -1,7 +1,6 @@
 
 import React from 'react'
-import {Link} from 'react-router-dom'
-import IncidentTableRow from '../../../components/IncidentTableRow';
+import IncidentTableRow from '../../../components/Incidents/IncidentTableRow';
 
 const IncidentTable = (props) => {
 
@@ -18,7 +17,7 @@ const IncidentTable = (props) => {
               <thead>
                 <tr>
                   <th scope="col">No</th>
-                  <th scope="col">Incident</th>
+                  <th scope="col">Description</th>
                   <th scope="col">Recorded By</th>
                   <th scope="col">Branch</th>
                   <th scope="col">Incident Type</th>
@@ -31,30 +30,17 @@ const IncidentTable = (props) => {
               <tbody>
               {
                 loadedIncidents.map((loadedIncident, index) => {
-                    console.log(loadedIncident)
-                    return <IncidentTableRow incident={loadedIncident} key={loadedIncident.id} num={index}/>
+                    return <IncidentTableRow incident={loadedIncident}
+                        key={loadedIncident.id}
+                        num={index}
+                        approveIncident={props.approveIncident}
+                        deleteIncident={props.deleteIncident}
+                      />
                 })
               }
               </tbody>
           </table>
           </div> 
-          {/* <div className="modal fade" id="exampleModal" tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div className="modal-dialog">
-                <div className="modal-content">
-                <div className="modal-header">
-                    <h5 className="modal-title" id="exampleModalLabel">Delete Incident</h5>
-                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
-                </div>
-                <div className="modal-body">
-                   This action cannot be reversed. Are you sure you want to delete the incident?
-                </div>
-                <div className="modal-footer">
-                    <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" className="btn btn-primary">Delete incident</button>
-                </div>
-                </div>
-            </div>
-            </div> */}
 
           <div className="modal fade" id="delete_modal">
             <div className="modal-dialog" role="document">

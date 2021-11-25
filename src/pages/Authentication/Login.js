@@ -1,7 +1,9 @@
 import { useNavigate } from "react-router"
+import {Link} from 'react-router-dom'
 import React, {useState, useRef, useContext} from 'react'
 import axios from 'axios';
 import UserContext from '../../store/UserContext';
+import { FormGroup, InputGroup, Text , Button, Checkbox} from '@blueprintjs/core';
 
 
 
@@ -11,6 +13,8 @@ const Login = () => {
   const [username,setUsername]=useState();
   const [accessToken,setAccessToken]=useState();
   const [refreshToken,setRefreshToken]=useState();
+  const [error_messages, setErrorMessages] = useState()
+
   const emailRef = useRef();
   const passwordRef = useRef();
   const navigate = useNavigate();
@@ -44,9 +48,10 @@ const Login = () => {
         console.log('invalid credentials')
       }
     }).catch(function(error) {
-      console.log(error)
+      // console.log(error)
       // message=error
-      // console.log(error.response.status)
+      console.log(error.response.data.errors)
+      setErrorMessages(error.response.data.errors)
     });
   }
     return (
@@ -54,33 +59,40 @@ const Login = () => {
 
 <div className="login-box">
   <div className="login-logo">
-    <a href="https://google.com"><b>AquaRose</b>Bank</a>
+    <Link to="/" className="brand-link">
+      <a href="#"><b>AquaRose</b>Bank</a>
+    </Link>
   </div>
+  
   {/* /.login-logo */}
   <div className="card">
     <div className="card-body login-card-body">
       <p className="login-box-msg">Sign in to start your session</p>
       <p>{message}</p>
       <form >
-        <div className="input-group mb-3">
-          <input type="text" className="form-control" placeholder="Username" ref={emailRef}/>
-          <div className="input-group-append">
-            <div className="input-group-text">
-              <span className="fas fa-envelope" />
-            </div>
-          </div>
-        </div>
-        <div className="input-group mb-3">
-          <input type="password" className="form-control" placeholder="Password" ref={passwordRef}/>
-          <div className="input-group-append">
-            <div className="input-group-text">
-              <span className="fas fa-lock" />
-            </div>
-          </div>
-        </div>
+
+        <InputGroup
+          leftIcon="envelope"
+          id="email-input"
+          className="mb-3"
+          placeholder="Email"
+          inputRef={emailRef}
+          large={true}
+        />
+
+        <InputGroup
+          type="password"
+          leftIcon="lock"
+          id="password-input"
+          className="mb-3"
+          placeholder="Password"
+          inputRef={passwordRef}
+          large={true}
+        />
+
         <div className="row">
           <div className="col-8">
-
+            
           </div>
           {/* /.col */}
           <div className="col-4">
