@@ -1,105 +1,43 @@
-import {React, useContext} from 'react'
+import {React, useContext, useState, useEffect} from 'react'
 import {Link} from 'react-router-dom'
 import {useNavigate} from 'react-router'
 import UserContext from '../store/UserContext';
-import axios from 'axios'
-
 
 const Menu = () => {
 
-
-  let user = {
-    _id: "2",
-    first_name: "Claude",
-    last_name: "Oduori",
-    email: "claude@gmail.com"
-}
-
-const userRolesObject = [{
-  _id: "1",
-  user_id: "2",
-  role_id: "1",
-},{
-  _id: "2",
-  user_id: "2",
-  role_id: "3",
-}, {
-  _id: "3",
-  user_id: "2",
-  role_id: "4",
-}, {
-  _id: "4",
-  user_id: "2",
-  role_id: "4",
-}, {
-  _id: "5",
-  user_id: "2",
-  role_id: "5",
-}, {
-  _id: "6",
-  user_id: "2",
-  role_id: "6",
-}, {
-  _id: "7",
-  user_id: "2",
-  role_id: "7",
-}]
-
-const rolesObject = [{
-    _id: "1",
-    role_code: "IMS_ASSIGN_ROLES",
-    system_id: "2"
-}, {
-    _id: "2",
-    role_code: "IMS_CHECK_INCIDENT",
-    system_id: "2"
-}, {
-    _id: "3",
-    role_code: "IMS_RECORD_INCIDENT",
-    system_id: "2"
-}, {
-    _id: "4",
-    role_code: "MAIN_MANAGE_BRANCHES",
-    system_id: "1"
-}, {
-    _id: "5",
-    role_code: "IMS_MANAGE_INCIDENT_TYPES",
-    system_id: "1"
-}, {
-    _id: "6",
-    role_code: "MAIN_MANAGE_USERS",
-    system_id: "1"
-}, {
-  _id: "7",
-  role_code: "IMS_VIEW_REPORTS",
-  system_id: "2"
-}]
-
-const systemsObject = [{
-    _id: "1",
-    sytem_name: "Main Bank System",
-    sytem_code: "MAIN"
-},{
-    _id: "2",
-    sytem_name: "Incidents Management System",
-    sytem_code: "IMS"
-}]
-
-
-
-  // const obj = rolesObject.find(({role_code}) => role_code == 'MAIN_MANAGE_USERS')
-  // const isFound = userRolesObject.some((user_role) => user_role.role_id === obj._id)
-  // console.log(isFound)
-
   const usercontext = useContext(UserContext);
   const navigate = useNavigate();
+  const [loggedInUserRoles, setLoggedInUserRoles] = useState([]);
+  const [roles, setRoles] = useState([]);
 
+  useEffect(() => {
+    const options = {
+        method: 'GET',
+        headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${usercontext.refreshToken} ${usercontext.accessToken}`
+        },
+    };
+
+    let get_user_roles = `http://localhost:3001/admin/users/roles`
+
+    async function fetchData() {
+      const response = await fetch(get_user_roles, options);
+      if (response.ok) {
+        const responseData = await response.json()
+        setRoles(responseData.roles)
+        setLoggedInUserRoles(responseData.loggedInUserRoles)
+      } else {
+        throw Error(response.status);
+      }
+    }
+    
+    fetchData();
+
+}, []);
 
   const logoutUser = (event) => {
     event.preventDefault()
-    // const refreshToken= localStorage.getItem("refreshToken")
-    const refreshToken = usercontext.refreshToken;
-    const accessToken = usercontext.accessToken;
     const options = {
       method: 'POST',
       headers: {
@@ -155,10 +93,16 @@ const systemsObject = [{
           </Link>
         </li>
         <li className="nav-item">
-          {userRolesObject.some((user_role) => user_role.role_id === rolesObject.find(({role_code}) => role_code == 'MAIN_MANAGE_BRANCHES')._id)
+          {/* {console.log(roles.find(({role_name}) => role_name == 'IMS_VIEW_REPORTS')._id)} */}
+          {/* {console.log(loggedInUserRoles.find(({role_id}) => role_id === "619f80f7ea72f8ecaa21c1d2"))} */}
+          {/* {loggedInUserRoles.map((userrole) => {
+            console.log(userrole)
+          })} */}
+
+          {loggedInUserRoles.some((user_role) => user_role.role_id === roles.find(({role_name}) => role_name == 'MAIN_MANAGE_BRANCHES')._id)
           ?
           <Link to="/manage-branch" className="nav-link">
-            <i className="nav-icon fas fa-th" />
+            <i className="nav-icon fas fa-th" />p
             <p>
               Manage branches
               {/* <span className="right badge badge-danger">New</span> */}
@@ -168,7 +112,7 @@ const systemsObject = [{
           : null }
         </li>
         <li className="nav-item">
-        {userRolesObject.some((user_role) => user_role.role_id === rolesObject.find(({role_code}) => role_code == 'IMS_MANAGE_INCIDENT_TYPES')._id)
+        {loggedInUserRoles.some((user_role) => user_role.role_id === roles.find(({role_name}) => role_name == 'IMS_MANAGE_INCIDENT_TYPES')._id)
           ?
           <Link to="/manage-incident" className="nav-link">
             <i className="nav-icon fas fa-th" />
@@ -181,7 +125,7 @@ const systemsObject = [{
           
         </li>
         <li className="nav-item">
-        {userRolesObject.some((user_role) => user_role.role_id === rolesObject.find(({role_code}) => role_code == 'IMS_VIEW_REPORTS')._id)
+        {loggedInUserRoles.some((user_role) => user_role.role_id === roles.find(({role_name}) => role_name == 'IMS_VIEW_REPORTS')._id)
           ?
           <Link to="/home" className="nav-link">
             <i className="nav-icon fas fa-th" />
@@ -193,9 +137,9 @@ const systemsObject = [{
           
         </li>
         <li className="nav-item">
-        {userRolesObject.some((user_role) => user_role.role_id === rolesObject.find(({role_code}) => role_code == 'MAIN_MANAGE_USERS')._id)
-        || userRolesObject.some((user_role) => user_role.role_id === rolesObject.find(({role_code}) => role_code == 'IMS_ASSIGN_ROLES')._id)
-        || userRolesObject.some((user_role) => user_role.role_id === rolesObject.find(({role_code}) => role_code == 'MAIN_ASSIGN_ROLES')._id)
+        {loggedInUserRoles.some((user_role) => user_role.role_id === roles.find(({role_name}) => role_name == 'MAIN_MANAGE_USERS')._id)
+        || loggedInUserRoles.some((user_role) => user_role.role_id === roles.find(({role_name}) => role_name == 'IMS_ASSIGN_ROLES')._id)
+        || loggedInUserRoles.some((user_role) => user_role.role_id === roles.find(({role_name}) => role_name == 'MAIN_ASSIGN_ROLES')._id)
           ?
           <Link to="/admin/users" className="nav-link">
             <i className="nav-icon fas fa-th" />

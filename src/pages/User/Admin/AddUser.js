@@ -1,4 +1,4 @@
-import {React, useContext, useRef} from 'react';
+import {React, useContext, useRef, useEffect, useState} from 'react';
 import { useNavigate } from "react-router";
 import {Link, useParams} from 'react-router-dom';
 
@@ -7,7 +7,6 @@ import { FormGroup, InputGroup, Text , Button, Checkbox} from '@blueprintjs/core
 import Footer from '../../../components/Footer';
 import Header from '../../../components/Header'
 import Menu from '../../../components/Menu';
-import RolesCheckBoxes from '../../../components/Users/RolesCheckboxes';
 import UserContext from '../../../store/UserContext';
 import BranchesContext from '../../../store/BranchesContext';
 
@@ -16,85 +15,41 @@ import BranchesContext from '../../../store/BranchesContext';
 
 const AddUser = () => {
 
-    const rolesObject = [{
-        _id: "1",
-        role_code: "IMS_ASSIGN_ROLES",
-        system_id: "2"
-    }, {
-        _id: "2",
-        role_code: "IMS_CHECK_INCIDENT",
-        system_id: "2"
-    }, {
-        _id: "3",
-        role_code: "IMS_RECORD_INCIDENT",
-        system_id: "2"
-    }, {
-        _id: "4",
-        role_code: "MAIN_MANAGE_BRANCHES",
-        system_id: "1"
-    }, {
-        _id: "5",
-        role_code: "IMS_MANAGE_INCIDENT_TYPES",
-        system_id: "2"
-    }, {
-        _id: "6",
-        role_code: "MAIN_MANAGE_USERS",
-        system_id: "1"
-    }, {
-      _id: "7",
-      role_code: "IMS_VIEW_REPORTS",
-      system_id: "2"
-    }, {
-      _id: "8",
-      role_code: "MAIN_ASSIGN_ROLES",
-      system_id: "1"
-  }]
-
-    const systemsObject = [{
-        _id: "1",
-        sytem_name: "Main Bank System",
-        sytem_code: "MAIN"
-    },{
-        _id: "2",
-        sytem_name: "Incidents Management System",
-        sytem_code: "IMS"
-    }]
-
-
     const navigate = useNavigate();
     const usercontext = useContext(UserContext);
+    const [roles, setRoles] = useState([]);
+    const [systems, setSystems] = useState([]);
 
     const firstNameRef = useRef();
     const lastNameRef = useRef();
     const emailRef = useRef();
     const rolesRef = useRef();
+    const passwordRef = useRef();
 
 
-    // useEffect(() => {
-    //     const options = {
-    //         method: 'GET',
-    //         headers: {
-    //         'Content-Type': 'application/json',
-    //         'Authorization': `Bearer ${usercontext.refreshToken} ${usercontext.accessToken}`
-    //         },
-    //     };
-    //     let get_user_url = `http://localhost:3001/admin/users/getOneUser/${user._id}`
-    //     fetch(get_user_url, options)
-    //     .then(response => {
-    //         if (!response.ok) {
-    //             throw Error(response.status);
-    //         }
-    //         return response.json(); 
-    //     })
-    //     .then(responseData => {
-    //         console.log(responseData)
-    //         setUser(responseData.userRecord);
-    //     })
-    //     .catch (err => {
-    //         console.log("Error");
-    //         console.log(err);
-    //     });
-    // }, []);
+    useEffect(() => {
+        const options = {
+            method: 'GET',
+            headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${usercontext.refreshToken} ${usercontext.accessToken}`
+            },
+        };
+        let add_user_url = `http://localhost:3001/admin/users/register`
+
+        async function fetchData() {
+          const response = await fetch(add_user_url, options);
+          if (response.ok) {
+            const responseData = await response.json()
+            setRoles(responseData.roles);
+            setSystems(responseData.systems);
+          } else {
+            throw Error(response.status);
+          }
+        }
+          
+        fetchData();
+    }, []);
 
     function addUserHandler(event) {
         event.preventDefault();
@@ -103,6 +58,7 @@ const AddUser = () => {
         const enteredFirstName = firstNameRef.current.value
         const enteredLastName = lastNameRef.current.value
         const enteredEmail = emailRef.current.value
+        const enteredPassword = passwordRef.current.value
 
         const system_roles_array = [...rolesRef.current.getElementsByClassName('system-roles-group')]
         system_roles_array.map((system_roles) => {
@@ -117,36 +73,38 @@ const AddUser = () => {
 
         const postData = {
             first_name: enteredFirstName,
-            last_name: enteredLastName,
+            surname: enteredLastName,
             email: enteredEmail,
-            roles: rolesPayload
+            roles: rolesPayload,
+            password: enteredPassword,
         }
         console.log(postData)
 
-        // const options = {
-        //     method: 'POST',
-        //     headers: {
-        //     'Content-Type': 'application/json',
-        //     'Authorization': `Bearer ${usercontext.refreshToken} ${usercontext.accessToken}`
-        //     },
-        // };
-        // let add_user_url = `http://localhost:3001/admin/users/addUser/${user._id}`
-        // fetch(add_user_url, options)
-        // .then(response => {
-        //     if (!response.ok) {
-        //         throw Error(response.status);
-        //     }
-        //     return response.json(); 
-        // })
-        // .then(responseData => {
-        //     console.log(responseData)
-        //     return navigate('/admin/users')
-        //     // setUser(responseData.userRecord);
-        // })
-        // .catch (err => {
-        //     console.log("Error");
-        //     console.log(err);
-        // });
+        const options = {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${usercontext.refreshToken} ${usercontext.accessToken}`
+            },
+            body: JSON.stringify(postData)
+        };
+        let add_user_url = `http://localhost:3001/admin/users/`
+        fetch(add_user_url, options)
+        .then(response => {
+            if (!response.ok) {
+                throw Error(response.status);
+            }
+            return response.json(); 
+        })
+        .then(responseData => {
+            console.log(responseData)
+            return navigate('/admin/users')
+            // setUser(responseData.userRecord);
+        })
+        .catch (err => {
+            console.log("Error");
+            console.log(err);
+        });
     }
 
     return (
@@ -170,7 +128,6 @@ const AddUser = () => {
                     <h5 class="card-header">Register User</h5>
                     <div class="card-body">
                     <h5 className="mt-4 ml-3">User Details</h5>
-
                     <div className="user-details ml-5">
                     <FormGroup
                         label="First Name:"
@@ -197,24 +154,32 @@ const AddUser = () => {
                     >
                         <InputGroup id="email-input" placeholder="Email" inputRef={emailRef}/>
                     </FormGroup>
+
+                    <FormGroup
+                        label="Password:"
+                        labelFor="password-input"
+                        inline={true}
+                    >
+                        <InputGroup id="password-input" placeholder="Password" inputRef={passwordRef}/>
+                    </FormGroup>
+                    
                     </div>
 
                     <h5 className="mt-4 ml-3">Assign Roles</h5>
 
                     <div className="system-roles-groups ml-5 mb-3" ref={rolesRef}>
 
-                    {systemsObject.map((system) => {
-                        
+                    {systems.map((system) => {
                         return <FormGroup
-                            label={`${system.sytem_name} Roles`}
-                            labelFor={`${system.sytem_name}-input`}
+                            label={`${system.system_name} Roles`}
+                            labelFor={`${system.system_name}-input`}
                             labelFor="main-roles-input"
                             className="system-roles-group"
                         >
-                            {rolesObject.map((role) => {
+                            {roles.map((role) => {
                                     if (role.system_id === system._id) {
                                         return <Checkbox
-                                                    label={role.role_code}
+                                                    label={role.role_name}
                                                     value={role._id}
                                                     className="system-role-checkbox"
                                                     />

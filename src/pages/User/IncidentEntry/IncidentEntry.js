@@ -68,7 +68,7 @@ const IncidentEntry = () => {
 
     const postData = {
         branch_id: enteredBranch,
-        incident_type: enteredIncidentType,
+        incident_type_id: enteredIncidentType,
         incident_status: incident_status,
         incident_description: enteredIncidentDescription,
         incident_date: incidentDate,
@@ -128,7 +128,7 @@ const IncidentEntry = () => {
                         <select className="form-select form-control" aria-label="Default select example" ref={branchRef}>
                           <option defaultValue>Select branch</option>
                           {branchescontext.branches.map((branch) => {
-                            return <option value={branch._id}>{branch.branch_code}</option>
+                            return branch.deleted == false ? <option value={branch._id}>{branch.branch_code}</option> : null
                           })}
                         </select>
                       </div>
@@ -149,7 +149,7 @@ const IncidentEntry = () => {
                         <select className="form-select form-control" aria-label="Default select example" ref={incidentTypeRef}>
                           <option defaultValue>Select Incident Type</option>
                           {incidenttypescontext.incident_types.map((incident_type) => {
-                            return <option value={incident_type.id}>{incident_type.incident_type}</option>
+                            return incident_type.deleted == false ?  <option value={incident_type._id}>{incident_type.incident_type}</option> : null
                           })}
                           {/* <option defaultValue>Fire</option>
                           <option value="Fraud">Fraud</option>

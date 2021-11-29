@@ -4,8 +4,6 @@ import {Link} from 'react-router-dom';
 import {FormGroup, InputGroup, Button} from "@blueprintjs/core"
 import {Classes, Popover2} from "@blueprintjs/popover2"
 
-// import "../../node_modules/@blueprintjs/popover2/lib/css/blueprint-popover2.css";
-
 import UserContext from '../../store/UserContext';
 
 
@@ -84,7 +82,7 @@ function UserTableRow (props) {
         <tr ref={userRowRef}>
             <th scope="row">{number}</th>
             <td> {user.first_name} </td>
-            <td> {user.last_name} </td>
+            <td> {user.surname} </td>
             <td> {user.email} </td>
             <td style={{whiteSpace: 'nowrap'}}>
                 {actionButtons()}

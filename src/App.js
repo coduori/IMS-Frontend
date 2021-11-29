@@ -14,6 +14,7 @@ import { BranchesContextProvider } from "./store/BranchesContext";
 import ManageUsers from "./pages/User/Admin/ManageUsers";
 import AddUser from "./pages/User/Admin/AddUser";
 import EditUser from "./pages/User/Admin/EditUser";
+import HomePage from "./pages/User/HomePage";
 
 function App() {
   
@@ -25,7 +26,7 @@ function App() {
         <Routes>
           <Route exact path="/home" element={<Home />} />
           <Route exact path="/" element={<Login />} />
-          {/* <Route exact path="/" element={<Home />} /> */}
+          <Route exact path="/incidents" element={<Home />} />
           <Route exact path="/approve-incident" element={<ApproveIncident />} />
           <Route exact path="/edit-incident/:incidentid" element={<EditIncident/>} />
           <Route exact path="/incident-entry" element={<IncidentEntry />} />

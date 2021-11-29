@@ -50,7 +50,7 @@ const AddBranch = () => {
             console.log(err);
         });
       },
-      [branchList]);
+      []);
 
     function DialogFooter(props) {
         return (

@@ -1,4 +1,4 @@
-import {React, useContext, useRef} from 'react';
+import {React, useContext, useRef, useState, useEffect} from 'react';
 import { useNavigate } from "react-router";
 import {Link, useParams} from 'react-router-dom';
 
@@ -15,12 +15,12 @@ import BranchesContext from '../../../store/BranchesContext';
 
 
 const EditUser = () => {
-    let user = {
-        _id: "2",
-        first_name: "Claude",
-        last_name: "Oduori",
-        email: "claude@gmail.com"
-    }
+    // let user = {
+    //     _id: "2",
+    //     first_name: "Claude",
+    //     last_name: "Oduori",
+    //     email: "claude@gmail.com"
+    // }
 
     const userRolesObject = [{
         _id: "1",
@@ -99,6 +99,11 @@ const EditUser = () => {
 
     // const 
     const {userid} = useParams();
+    const [editingUser, setEditingUser] = useState({userRecord:{_id: "", first_name:"", surname:"", email:""}, roles: []});
+    const [loggedInUserId, setLoggedInUserId] = useState("");
+    const [userRoles, setUserRoles] = useState();
+    const [systems, setSystems] = useState([]);
+    const [roles, setRoles] = useState([])
     const navigate = useNavigate();
     const usercontext = useContext(UserContext);
     // const [user, setUser] = useContext(JSON.stringify(userObject));
@@ -110,31 +115,34 @@ const EditUser = () => {
     const rolesRef = useRef();
 
 
-    // useEffect(() => {
-    //     const options = {
-    //         method: 'GET',
-    //         headers: {
-    //         'Content-Type': 'application/json',
-    //         'Authorization': `Bearer ${usercontext.refreshToken} ${usercontext.accessToken}`
-    //         },
-    //     };
-    //     let get_user_url = `http://localhost:3001/admin/users/getOneUser/${user._id}`
-    //     fetch(get_user_url, options)
-    //     .then(response => {
-    //         if (!response.ok) {
-    //             throw Error(response.status);
-    //         }
-    //         return response.json(); 
-    //     })
-    //     .then(responseData => {
-    //         console.log(responseData)
-    //         setUser(responseData.userRecord);
-    //     })
-    //     .catch (err => {
-    //         console.log("Error");
-    //         console.log(err);
-    //     });
-    // }, []);
+    useEffect(() => {
+        const options = {
+            method: 'GET',
+            headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${usercontext.refreshToken} ${usercontext.accessToken}`
+            },
+        };
+        let get_user_url = `http://localhost:3001/admin/users/${userid}`
+
+        async function fetchData() {
+          const response = await fetch(get_user_url, options);
+          if (response.ok) {
+            const responseData = await response.json()
+            console.log(responseData)
+            setEditingUser(responseData.user);
+            setLoggedInUserId(responseData.loggedinUserId);
+            setSystems(responseData.systems);
+            setRoles(responseData.roles)
+          } else {
+            const responseData = await response.json()
+            console.log(responseData)
+            // throw Error(response.json());
+          }
+        }
+
+        fetchData();
+    }, []);
 
     function editUserHandler(event) {
         event.preventDefault();
@@ -157,7 +165,7 @@ const EditUser = () => {
 
         const postData = {
             first_name: enteredFirstName,
-            last_name: enteredLastName,
+            surname: enteredLastName,
             email: enteredEmail,
             roles: rolesPayload
         }
@@ -169,24 +177,23 @@ const EditUser = () => {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${usercontext.refreshToken} ${usercontext.accessToken}`
             },
+            body: JSON.stringify(postData)
         };
-        let get_user_url = `http://localhost:3001/admin/users/editUser/${user._id}`
-        fetch(get_user_url, options)
-        .then(response => {
-            if (!response.ok) {
-                throw Error(response.status);
-            }
-            return response.json(); 
-        })
-        .then(responseData => {
+        let edit_user_url = `http://localhost:3001/admin/users/edit/${userid}`
+        async function fetchData() {
+          const response = await fetch(edit_user_url, options);
+          if (response.ok) {
+            const responseData = await response.json()
             console.log(responseData)
-            return navigate('/admin/users')
-            // setUser(responseData.userRecord);
-        })
-        .catch (err => {
-            console.log("Error");
-            console.log(err);
-        });
+            navigate('/admin/users')
+          } else {
+            const responseData = await response.json()
+            console.log(responseData)
+            // throw Error(response.json());
+          }
+        }
+
+        fetchData();
     }
 
     return (
@@ -217,7 +224,7 @@ const EditUser = () => {
                         inline={true}
                         
                     >
-                        <InputGroup id="first-name-input" placeholder="First Name" defaultValue={user.first_name} inputRef={firstNameRef} disabled={true}/>
+                        <InputGroup id="first-name-input" placeholder="First Name" defaultValue={editingUser.userRecord.first_name} inputRef={firstNameRef} disabled={true}/>
                     </FormGroup>
 
                     <FormGroup
@@ -225,7 +232,7 @@ const EditUser = () => {
                         labelFor="last-name-input"
                         inline={true}
                     >
-                        <InputGroup id="last-name-input" placeholder="Last Name" defaultValue={user.last_name} inputRef={lastNameRef} disabled={true}/>
+                        <InputGroup id="last-name-input" placeholder="Last Name" defaultValue={editingUser.userRecord.surname} inputRef={lastNameRef} disabled={true}/>
                     </FormGroup>
 
                     <FormGroup
@@ -233,25 +240,25 @@ const EditUser = () => {
                         labelFor="email-input"
                         inline={true}
                     >
-                        <InputGroup id="email-input" placeholder="Email" defaultValue={user.email} inputRef={emailRef} disabled={true}/>
+                        <InputGroup id="email-input" placeholder="Email" defaultValue={editingUser.userRecord.email} inputRef={emailRef} disabled={true}/>
                     </FormGroup>
                     </div>
 
                     <h5 className="mt-4 ml-3">Assign Roles</h5>
 
                     <div className="system-roles-groups ml-5 mb-3" ref={rolesRef}>
-
-                    {systemsObject.map((system) => {
+                        {console.log(editingUser.userRecord._id, loggedInUserId)}
+                    { systems.map((system) => {
                         
                         return <FormGroup
-                            label={`${system.sytem_name} Roles`}
-                            labelFor={`${system.sytem_name}-input`}
+                            label={`${system.system_name} Roles`}
+                            labelFor={`${system.system_name}-input`}
                             labelFor="main-roles-input"
                             className="system-roles-group"
                         >
-                            {rolesObject.map((role) => {
+                            {roles.map((role) => {
                                 
-                                const roleMatchesCheck = userRolesObject.map((userRole) => {
+                                const roleMatchesCheck = editingUser.roles.map((userRole) => {
                                     if (userRole.role_id === role._id) {
                                         return {check: "SUCCESS", userRole, role}
                                     } else {
@@ -262,10 +269,10 @@ const EditUser = () => {
                                 const bg = roleMatchesCheck.filter(function(val) { return val.check == "FAIL" })
 
                                 if (gb.length > 0) {
-                                    const gf = rolesObject.find(rol => rol._id == gb[0].userRole.role_id)
+                                    const gf = roles.find(rol => rol._id == gb[0].userRole.role_id)
                                     if (gf.system_id === system._id) {
                                         return <Checkbox
-                                                    label={role.role_code}
+                                                    label={role.role_name}
                                                     defaultChecked={true}
                                                     value={role._id}
                                                     className="system-role-checkbox"
@@ -274,10 +281,10 @@ const EditUser = () => {
                                         return null
                                     }
                                 } else {
-                                    const fg = role._id === bg[0].userRole.role_id ? role : null
+                                    // const fg = role._id === bg[0].userRole.role_id ? role : null
                                     if (role.system_id === system._id) {
                                         return <Checkbox
-                                                    label={role.role_code}
+                                                    label={role.role_name}
                                                     value={role._id}
                                                     className="system-role-checkbox"
                                                 />
@@ -290,8 +297,10 @@ const EditUser = () => {
                     })}
 
                     </div>
-
-                    <Button className= {`ml-3`} text="Save" intent="success" type="button" onClick={editUserHandler}/>
+                    { editingUser.userRecord._id === loggedInUserId 
+                    ? null 
+                    : <Button className= {`ml-3`} text="Save" intent="success" type="button" onClick={editUserHandler}/>
+                    }
                     </div>
 
 

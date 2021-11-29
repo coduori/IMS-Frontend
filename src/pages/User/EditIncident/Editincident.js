@@ -32,13 +32,14 @@ const EditIncident = (props) => {
 
   const {incidentid} = useParams();
 
-  let editing_incident = null;
-  incidentscontext.incidents.map(function(incident) {
-    if(incident._id === incidentid) {
-      editing_incident = incident;
-    }
-  });
-  console.log(editing_incident)
+  // let editing_incident = null;
+  // incidentscontext.incidents.map(function(incident) {
+  //   if(incident._id === incidentid) {
+  //     editing_incident = incident;
+  //   }
+  // });
+  const editing_incident = incidentscontext.incidents.find(({_id}) => _id == incidentid)
+
   const [incidentDate, setIncidentDate] = useState(new Date(editing_incident.incident_date));
   const incidentactions = [
     {
@@ -88,32 +89,32 @@ const EditIncident = (props) => {
 
     console.log(postData)
     
-    const options = {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${usercontext.refreshToken} ${usercontext.accessToken}`
-        },
-        body: JSON.stringify(postData),
-    };
-    let edit_incident_url = `http://localhost:3005/incidents/editIncident/${incidentid}`;
-    fetch(edit_incident_url, options)
-      .then(response => {
-          console.log(response.status);
-          if (response.status === 403) {
-              // usercontext.setJwt("");
-              // usercontext.setIsLoggedIn(false);
-              // localStorage.clear();
-          }
-          return response.json();
-      })
-      .then(responseData => {
-          console.log(responseData);
-          return navigate('/home');
-      })
-      .catch(e => {
-          console.log(e);
-      });
+    // const options = {
+    //     method: 'PATCH',
+    //     headers: {
+    //         'Content-Type': 'application/json',
+    //         'Authorization': `Bearer ${usercontext.refreshToken} ${usercontext.accessToken}`
+    //     },
+    //     body: JSON.stringify(postData),
+    // };
+    // let edit_incident_url = `http://localhost:3005/incidents/editIncident/${incidentid}`;
+    // fetch(edit_incident_url, options)
+    //   .then(response => {
+    //       console.log(response.status);
+    //       if (response.status === 403) {
+    //           // usercontext.setJwt("");
+    //           // usercontext.setIsLoggedIn(false);
+    //           // localStorage.clear();
+    //       }
+    //       return response.json();
+    //   })
+    //   .then(responseData => {
+    //       console.log(responseData);
+    //       return navigate('/home');
+    //   })
+    //   .catch(e => {
+    //       console.log(e);
+    //   });
   }
 
   function deleteIncidentHandler (event) {
@@ -169,9 +170,9 @@ const EditIncident = (props) => {
                   <div className="col">
                   <label>Branch Code</label>
                   <select class="form-select form-control" aria-label="Default select example" ref={branchRef}>
-                  <option defaultValue>{editing_incident.branch_id}</option>
+                  <option value={editing_incident.branch_id}>{branchescontext.branches.find(({_id}) => _id == editing_incident.branch_id).branch_code}</option>
                     {branchescontext.branches.map((branch) => {
-                      return <option value={branch.branch_code}>{branch.branch_code}</option>
+                      return branch.deleted == false ? <option value={branch.id}>{branch.branch_code}</option> : null
                     })}
                   </select>
                   </div>
@@ -190,9 +191,9 @@ const EditIncident = (props) => {
                   <div className="col">
                   <label>Incident Type</label>
                     <select class="form-select form-control" aria-label="Default select example" ref={incidentTypeRef}>
-                      <option defaultValue>{editing_incident.incident_type}</option>
+                      <option defaultValue={editing_incident.incident_type_id}>{incidenttypescontext.incident_types.find(({_id}) => _id == editing_incident.branch_id).branch_code}</option>
                       {incidenttypescontext.incident_types.map((incident_type) => {
-                        return <option value={incident_type.id}>{incident_type.incident_type}</option>
+                        return incident_type.deleted == false ?  <option value={incident_type.id}>{incident_type.incident_type}</option> : null
                       })}
                     </select>
                   </div>

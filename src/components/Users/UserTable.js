@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import UserTableRow from './UserTableRow'
 
 const UserTable = (props) => {
     const loadedUsers = props.usersData;
-    console.log(loadedUsers)
+    // const [loadedUsers, setLoadedUsers] = useState(props.usersData)
+    // console.log(props.usersData)
     return (
         <>
         <div className="card">
@@ -17,7 +18,7 @@ const UserTable = (props) => {
                         <tr>
                             <th scope="col">No</th>
                             <th scope="col">First Name</th>
-                            <th scope="col">Last Name</th>
+                            <th scope="col">Surname</th>
                             <th scope="col">Email</th>
                             <th scope="col">Actions</th>
                         </tr>
