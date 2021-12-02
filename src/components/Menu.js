@@ -7,7 +7,7 @@ const Menu = () => {
 
   const usercontext = useContext(UserContext);
   const navigate = useNavigate();
-  const [loggedInUserRoles, setLoggedInUserRoles] = useState([]);
+  // const [loggedInUserRoles, setLoggedInUserRoles] = useState([]);
   const [roles, setRoles] = useState([]);
 
   useEffect(() => {
@@ -26,7 +26,7 @@ const Menu = () => {
       if (response.ok) {
         const responseData = await response.json()
         setRoles(responseData.roles)
-        setLoggedInUserRoles(responseData.loggedInUserRoles)
+        // setLoggedInUserRoles(responseData.loggedInUserRoles)
       } else {
         throw Error(response.status);
       }
@@ -99,10 +99,10 @@ const Menu = () => {
             console.log(userrole)
           })} */}
 
-          {loggedInUserRoles.some((user_role) => user_role.role_id === roles.find(({role_name}) => role_name == 'MAIN_MANAGE_BRANCHES')._id)
+          {roles.includes('MAIN_MANAGE_BRANCHES')
           ?
           <Link to="/manage-branch" className="nav-link">
-            <i className="nav-icon fas fa-th" />p
+            <i className="nav-icon fas fa-th" />
             <p>
               Manage branches
               {/* <span className="right badge badge-danger">New</span> */}
@@ -112,8 +112,8 @@ const Menu = () => {
           : null }
         </li>
         <li className="nav-item">
-        {loggedInUserRoles.some((user_role) => user_role.role_id === roles.find(({role_name}) => role_name == 'IMS_MANAGE_INCIDENT_TYPES')._id)
-          ?
+        {roles.includes('MAIN_MANAGE_INCIDENT_TYPES')
+        ?
           <Link to="/manage-incident" className="nav-link">
             <i className="nav-icon fas fa-th" />
             <p>
@@ -121,34 +121,44 @@ const Menu = () => {
               {/* <span className="right badge badge-danger">New</span> */}
             </p>
           </Link>
-          : null }
+        : null }
           
         </li>
         <li className="nav-item">
-        {loggedInUserRoles.some((user_role) => user_role.role_id === roles.find(({role_name}) => role_name == 'IMS_VIEW_REPORTS')._id)
-          ?
+        {roles.includes('IMS_VIEW_USER_REPORTS')
+        ?
           <Link to="/home" className="nav-link">
             <i className="nav-icon fas fa-th" />
             <p>
               View Reports
             </p>
           </Link>
-          : null }
+        : null }
           
         </li>
         <li className="nav-item">
-        {loggedInUserRoles.some((user_role) => user_role.role_id === roles.find(({role_name}) => role_name == 'MAIN_MANAGE_USERS')._id)
-        || loggedInUserRoles.some((user_role) => user_role.role_id === roles.find(({role_name}) => role_name == 'IMS_ASSIGN_ROLES')._id)
-        || loggedInUserRoles.some((user_role) => user_role.role_id === roles.find(({role_name}) => role_name == 'MAIN_ASSIGN_ROLES')._id)
-          ?
+        {roles.includes('IMS_ASSIGN_ROLES')
+        || roles.includes('MAIN_ASSIGN_ROLES')
+        || roles.includes('MAIN_MANAGE_USERS')
+        ?
           <Link to="/admin/users" className="nav-link">
             <i className="nav-icon fas fa-th" />
             <p>
               Admin module
             </p>
           </Link>
-          : null }
+        : null }
         </li>
+        {roles.includes('IMS_VIEW_USER_REPORTS')
+        ?
+          <Link to="/reports" className="nav-link">
+            <i className="nav-icon fas fa-th" />
+            <p>
+              View Reports
+              {/* <span className="right badge badge-danger">New</span> */}
+            </p>
+          </Link>
+        : null }
         <li className="nav-item">
           <button className="nav-link" onClick={logoutUser}>
             Logout

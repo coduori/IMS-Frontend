@@ -15,6 +15,7 @@ import ManageUsers from "./pages/User/Admin/ManageUsers";
 import AddUser from "./pages/User/Admin/AddUser";
 import EditUser from "./pages/User/Admin/EditUser";
 import HomePage from "./pages/User/HomePage";
+import Reports from "./pages/HOD/Reports";
 
 function App() {
   
@@ -24,7 +25,7 @@ function App() {
     <BranchesContextProvider>
       <BrowserRouter>
         <Routes>
-          <Route exact path="/home" element={<Home />} />
+          <Route exact path="/home" element={<HomePage />} />
           <Route exact path="/" element={<Login />} />
           <Route exact path="/incidents" element={<Home />} />
           <Route exact path="/approve-incident" element={<ApproveIncident />} />
@@ -37,6 +38,7 @@ function App() {
           <Route exact path="/admin/users" element={<ManageUsers />} />
           <Route exact path="/admin/users/add/" element={<AddUser />} />
           <Route exact path="/admin/users/edit/:userid" element={<EditUser />} />
+          <Route exact path="/reports" element={<Reports />} />
         </Routes>
       </BrowserRouter>
     </BranchesContextProvider>

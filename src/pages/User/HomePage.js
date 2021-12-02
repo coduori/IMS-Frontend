@@ -1,4 +1,4 @@
-import {React, useEffect, useContext} from 'react';
+import {React, useEffect, useContext, useState} from 'react';
 import { useNavigate } from "react-router"
 import {Link} from 'react-router-dom'
 
@@ -13,45 +13,40 @@ import UserContext from '../../store/UserContext'
 const HomePage = (props) => {
   const navigate = useNavigate();
   const usercontext = useContext(UserContext);
+  const [roles, setRoles] = useState([]);
 
-    // useEffect(() => {
-    //     const options = {
-    //         method: 'GET',
-    //         headers: {
-    //         'Content-Type': 'application/json',
-    //         'Authorization': `Bearer ${usercontext.refreshToken} ${usercontext.accessToken}`
-    //         },
-    //     };
-    //     let get_chart_data_info = 'http://localhost:3005/incidents/getIncidentsView';
-    //     async function fetchData() {
-    //         try {
-    //             const response = await fetch(get_chart_data_info, options);
-    //             if (response.ok) {
-    //                 const responseData = await response.json();
-    //                 console.log(responseData);
-    //             } else {
-    //                 const responseData = await response.json();
-    //                 console.log(responseData);
-    //                 // setErrorMessages(responseData.errors)
-    //                 responseData.errors.map(error => {
-    //                     console.log(error.message)
-    //                     ErrorNotification.show({icon: "warning-sign", message: error.message, timeout: 3000, intent: "danger"});
-    //                 })
-    //             }
-    //         } catch (failedResponse) {
-    //         // console.log(await failedResponse.data)
-    //         }
-    //     }
+  useEffect(() => {
+    const options = {
+        method: 'GET',
+        headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${usercontext.refreshToken} ${usercontext.accessToken}`
+        },
+    };
 
-    //     fetchData();
-    // }, []);
+    let get_user_roles = `http://localhost:3001/admin/users/roles`
 
-    function setErrorNotifications(errors) {
-        errors.map(error => {
-            console.log(error.message)
-            ErrorNotification.show({icon: "warning-sign", message: error.message, timeout: 4000, intent: "danger"});
-        })
+    async function fetchData() {
+      const response = await fetch(get_user_roles, options);
+      if (response.ok) {
+        const responseData = await response.json()
+        console.log(responseData)
+        setRoles(responseData.roles)
+        // setLoggedInUserRoles(responseData.loggedInUserRoles)
+      } else {
+        throw Error("Error");
+      }
     }
+    
+    fetchData();
+
+}, []);
+  function setErrorNotifications(errors) {
+      errors.map(error => {
+          console.log(error.message)
+          ErrorNotification.show({icon: "warning-sign", message: error.message, timeout: 4000, intent: "danger"});
+      })
+  }
 
   return (
     <div className="wrapper">  
@@ -74,7 +69,10 @@ const HomePage = (props) => {
             <div className="container-fluid">
               <div className="wrapper">
                 <div className="charts-section">
-                <UserIncidentChart setErrorNotifications={setErrorNotifications}/>
+                  {roles.includes("IMS_VIEW_USER_REPORTS")
+                  ? <UserIncidentChart setErrorNotifications={setErrorNotifications}/> 
+                  : null }
+                
                 </div>
 
                 {/* <!-- Tabs navs --> */}

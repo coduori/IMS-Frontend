@@ -19,38 +19,72 @@ const Home = (props) => {
   const branchescontext = useContext(BranchesContext);
 
   useEffect(() => {
-    const options = {
-        method: 'GET',
-        headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${usercontext.refreshToken} ${usercontext.accessToken}`
-        },
-    };
+    
+    let did_refresh_access_token = false;
+    let errors = []
+    const refreshed_access_token = null;
     let getIncidentsUrl = 'http://localhost:3005/incidents/getIncidentsView';
-    fetch(getIncidentsUrl, options)
-    .then(response => {
-        if (response.status === 401 || response.status === 403) {
-            // usercontext.setJwt("");
-            // usercontext.setIsLoggedIn(false);
-            // localStorage.clear();
-            console.log("Error");
-            // history.replace('/users/login')
-        } 
-        return response.json(); 
-    })
-    .then(responseData => {
-      console.log(responseData);
-      incidentscontext.setIncidents(responseData.incidentRecords);
-      branchescontext.setBranches(responseData.branches);
-      incidenttypescontext.setIncidentTypes(responseData.incident_types);
+    async function fetchData() {
+        const options = {
+            method: 'GET',
+            headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${usercontext.refreshToken} ${usercontext.accessToken}`
+            },
+        };
+        try {
+            const response = await fetch(getIncidentsUrl, options);
+            if (response.ok) {
+                const responseData = await response.json();
+                console.log(responseData);
+                incidentscontext.setIncidents(responseData.incidentRecords);
+                branchescontext.setBranches(responseData.branches);
+                incidenttypescontext.setIncidentTypes(responseData.incident_types);
+            } else {
+                const responseData = await response.json();
+                console.log(responseData);
 
-    })
-    .catch (err => {
-        console.log("Err");
-        console.log(err);
-    });
+                if (responseData.error && responseData.error === "EXPIRED_ACCESS_TOKEN") {
+                    const refresh_options = {
+                        method: 'GET',
+                        headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${usercontext.refreshToken} ${usercontext.accessToken}`
+                        },
+                    };
+                  const refresh_access_token_url = 'http://127.0.0.1:3000/auth/token/refresh'
+                  const refreshTokenResponse = await fetch(refresh_access_token_url, refresh_options);
+                  
+                  if(refreshTokenResponse.ok) {
+                      const responseData = await refreshTokenResponse.json();
+                      console.log(responseData)
+                      usercontext.setAccessToken(responseData.accessToken);
+                      console.log(usercontext.accessToken)
+                      refreshed_access_token = responseData.accessToken
+                      did_refresh_access_token = true;
+                  } else {
+                      console.log("Error Refreshing Token")
+                      errors.push({message: "Error Refreshing Token"})
+                  }
+                } else {
+                  console.log(responseData);
+                  errors.push({message: "Error Fetching Incidents Data"})
+                }
+            }
+        } catch (failedResponse) {
+          console.log("true")
+        // console.log(await failedResponse.data)
+        }
+    }
+
+    fetchData();
+    console.log(did_refresh_access_token)
+    if (did_refresh_access_token) {
+      fetchData();
+    }
+    console.log(errors)
   },
-  []);
+  [usercontext.refreshToken, usercontext.accessToken, usercontext.setAccessToken]);
 
   function deleteIncident (incident_id) {
 
@@ -85,66 +119,6 @@ const Home = (props) => {
                 approveIncident={approveIncident}
                 deleteIncident={deleteIncident}
                 />
-
-                {/* <!-- Tabs navs --> */}
-                {/* <ul class="nav nav-tabs mb-3" id="ex1" role="tablist">
-                  <li class="nav-item" role="presentation">
-                    <a
-                      class="nav-link active"
-                      id="ex1-tab-1"
-                      data-mdb-toggle="tab"
-                      href="#ex1-tabs-1"
-                      role="tab"
-                      aria-controls="ex1-tabs-1"
-                      aria-selected="true"
-                      >Tab 1</a
-                    >
-                  </li>
-                  <li class="nav-item" role="presentation">
-                    <a
-                      class="nav-link"
-                      id="ex1-tab-2"
-                      data-mdb-toggle="tab"
-                      href="#ex1-tabs-2"
-                      role="tab"
-                      aria-controls="ex1-tabs-2"
-                      aria-selected="false"
-                      >Tab 2</a
-                    >
-                  </li>
-                  <li class="nav-item" role="presentation">
-                    <a
-                      class="nav-link"
-                      id="ex1-tab-3"
-                      data-mdb-toggle="tab"
-                      href="#ex1-tabs-3"
-                      role="tab"
-                      aria-controls="ex1-tabs-3"
-                      aria-selected="false"
-                      >Tab 3</a
-                    >
-                  </li>
-                </ul>
-                <!-- Tabs navs --> */}
-
-                {/* <!-- Tabs content --> */}
-                {/* <div class="tab-content" id="ex1-content">
-                  <div
-                    class="tab-pane fade show active"
-                    id="ex1-tabs-1"
-                    role="tabpanel"
-                    aria-labelledby="ex1-tab-1"
-                  >
-                    Tab 1 content
-                  </div>
-                  <div class="tab-pane fade" id="ex1-tabs-2" role="tabpanel" aria-labelledby="ex1-tab-2">
-                    Tab 2 content
-                  </div>
-                  <div class="tab-pane fade" id="ex1-tabs-3" role="tabpanel" aria-labelledby="ex1-tab-3">
-                    Tab 3 content
-                  </div>
-                </div>
-<!-- Tabs content --> */}
               </div>
             </div>  {/* /.container-fluid */}
           </div>  {/* /.content */}

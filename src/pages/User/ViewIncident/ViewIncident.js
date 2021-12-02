@@ -203,7 +203,7 @@ const ViewIncident = (props) => {
                   </div>
                   <div className="col">
                     <label>Incident Type</label>
-                    <input type="text" className="form-control" defaultValue={editing_incident.incident_type} readOnly/>
+                    <input type="text" className="form-control" defaultValue={editing_incident.incident_type_id} readOnly/>
                   </div>
                 </div>
                 <div className="m-5"></div>

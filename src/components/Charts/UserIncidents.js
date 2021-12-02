@@ -26,16 +26,20 @@ const UserIncidentChart = (props) => {
     const [chartData, setChartData] = useState({});
 
     useEffect(() => {
-        const options = {
+        
+        const errors = []
+        const get_chart_data_info = 'http://localhost:3006/reports/data/userincidents';
+        let refreshed_access_token = false;
+        async function fetchData() {
+          const options = {
             method: 'GET',
             headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${usercontext.refreshToken} ${usercontext.accessToken}`
             },
-        };
-        const errors = []
-        const get_chart_data_info = 'http://localhost:3006/reports/data/userincidents';
-        async function fetchData() {
+          };
+          console.log("Making request")
+          console.log(usercontext.accessToken);
             try {
                 const response = await fetch(get_chart_data_info, options);
                 if (response.ok) {
@@ -50,14 +54,14 @@ const UserIncidentChart = (props) => {
                           data: labels.map((labelname) => {
                             
                             if (labelname == 'APPROVED') {
-                              console.log(parseInt(responseData.approvedIncidentsCount));
-                              return parseInt(responseData.approvedIncidentsCount)
+                              console.log(parseInt(responseData.reportdata.approvedIncidentsCount));
+                              return parseInt(responseData.reportdata.approvedIncidentsCount)
                             } else if (labelname == 'CLOSED') {
-                              console.log(parseInt(responseData.closedIncidentsCount));
-                              return parseInt(responseData.closedIncidentsCount)
+                              console.log(parseInt(responseData.reportdata.closedIncidentsCount));
+                              return parseInt(responseData.reportdata.closedIncidentsCount)
                             } else if (labelname == 'OPEN') {
-                              console.log(parseInt(responseData.openIncidentsCount));
-                              return parseInt(responseData.openIncidentsCount)
+                              console.log(parseInt(responseData.reportdata.openIncidentsCount));
+                              return parseInt(responseData.reportdata.openIncidentsCount)
                             }
                             return 4
                           }),
@@ -72,14 +76,26 @@ const UserIncidentChart = (props) => {
                     });
                 } else {
                     const responseData = await response.json();
-                    if (responseData.error === "EXPIRED_REFRESH_TOKEN") {
+                    if (responseData.error && responseData.error === "EXPIRED_ACCESS_TOKEN") {
+                      console.log("Refreshing token")
+                      console.log(usercontext.accessToken);
                       const refresh_access_token_url = 'http://127.0.0.1:3000/auth/token/refresh'
-                      const refreshTokenResponse = await fetch(refresh_access_token_url, options);
+                      const refresh_options = {
+                        method: 'GET',
+                        headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${usercontext.refreshToken} ${usercontext.accessToken}`
+                        },
+                      };
+                      const refreshTokenResponse = await fetch(refresh_access_token_url, refresh_options);
 
                       if(refreshTokenResponse.ok) {
-                        const responseData = await response.json();
+                        const responseData = await refreshTokenResponse.json();
                         usercontext.setAccessToken(responseData.accessToken)
-                        fetchData();
+                        console.log("New token")
+                        console.log(responseData.accessToken);
+                        console.log(usercontext.accessToken);
+                        refreshed_access_token = true
                       } else {
                         console.log("Error Refreshing Token")
                         errors.push({message: "Error Refreshing Token"})
@@ -95,10 +111,13 @@ const UserIncidentChart = (props) => {
         }
 
         fetchData();
+        if (refreshed_access_token) {
+          fetchData();
+        }
         if (errors.length > 0) {
           props.setErrorNotifications(errors)
         }
-    }, []);
+    }, [usercontext.refreshToken, usercontext.accessToken, usercontext.setAccessToken]);
 
     ChartJS.register(
         CategoryScale,
@@ -162,7 +181,7 @@ const UserIncidentChart = (props) => {
         <>
             <div className="chart-section-header"></div>
             <div className="chart-section-content">
-              <Bar data={chartData} options={options}/>
+              {/* <Bar data={chartData} options={options}/> */}
             </div>
             <div className="chart-section-footer">
               <Link to="/incidents">

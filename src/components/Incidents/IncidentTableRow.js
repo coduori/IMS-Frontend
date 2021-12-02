@@ -84,7 +84,7 @@ function IncidentTableRow (props) {
             return (
                 <>
                 <Link to={`/view-incident/${incident._id}`}>
-                <button type="button" className="btn btn-xs btn-primary ">View</button>
+                    <button type="button" className="btn btn-xs btn-primary ">View</button>
                 </Link>
 
                 <Popover2
@@ -110,7 +110,7 @@ function IncidentTableRow (props) {
                     </div>
                 }
                 renderTarget={({ isOpen, ref, ...targetProps }) => (
-                    <Button {...targetProps} elementRef={ref} intent="success" text="Close" className= {`ml-3` }/>
+                    <Button {...targetProps} elementRef={ref} intent="success" text="Close" className= {`ml-3` } small={true}/>
                 )}
             />
                 <Link to="/edit-incident">
@@ -135,7 +135,7 @@ function IncidentTableRow (props) {
             <td> <Text title="Incident Description" ellipsize={true}> {incident.incident_description}</Text> </td>
             <td> {incident.recorded_by} </td>
             <td> {incident.branch_id} </td>
-            <td> {incident.incident_type} </td>
+            <td> {incident.incident_type_id} </td>
             <td> {incident.reported_by} </td>
             <td> {incident_date} </td>
             <td> {incident.incident_status} </td>

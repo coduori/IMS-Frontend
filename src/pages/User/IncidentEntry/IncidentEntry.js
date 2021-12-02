@@ -96,7 +96,7 @@ const IncidentEntry = () => {
       })
       .then(responseData => {
           console.log(responseData);
-          return navigate('/home');
+          return navigate('/incidents');
       })
       .catch(e => {
           console.log(e);
@@ -126,7 +126,7 @@ const IncidentEntry = () => {
                     <div className="row mb-4">
                       <div className="col">
                         <select className="form-select form-control" aria-label="Default select example" ref={branchRef}>
-                          <option defaultValue>Select branch</option>
+                          <option disabled={true}>Select branch</option>
                           {branchescontext.branches.map((branch) => {
                             return branch.deleted == false ? <option value={branch._id}>{branch.branch_code}</option> : null
                           })}
@@ -147,14 +147,10 @@ const IncidentEntry = () => {
                       </div>
                       <div className="col">
                         <select className="form-select form-control" aria-label="Default select example" ref={incidentTypeRef}>
-                          <option defaultValue>Select Incident Type</option>
+                          <option disabled={true}>Select Incident Type</option>
                           {incidenttypescontext.incident_types.map((incident_type) => {
                             return incident_type.deleted == false ?  <option value={incident_type._id}>{incident_type.incident_type}</option> : null
                           })}
-                          {/* <option defaultValue>Fire</option>
-                          <option value="Fraud">Fraud</option>
-                          <option value="Theft">Theft</option>
-                          <option value="Vandalism">Vandalism</option> */}
                         </select>
                       </div>
                     </div>

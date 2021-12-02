@@ -1,4 +1,4 @@
-import React, {useState, useRef, useContext} from "react";
+import React, {useState, useRef, useContext, useEffect} from "react";
 import { useNavigate } from "react-router";
 import {Link, useParams} from 'react-router-dom';
 
@@ -13,13 +13,14 @@ import IncidentTypesContext from '../../../store/IncidentTypesContext';
 import BranchesContext from '../../../store/BranchesContext';
 
 import DatePicker from "react-datepicker";
+import moment from "moment";
 import "react-datepicker/dist/react-datepicker.css";
 
 const EditIncident = (props) => {
   const navigate = useNavigate();
 
   const usercontext = useContext(UserContext);
-  const incidentscontext = useContext(IncidentsContext);
+  // const incidentscontext = useContext(IncidentsContext);
   const incidenttypescontext = useContext(IncidentTypesContext);
   const branchescontext = useContext(BranchesContext);
 
@@ -31,27 +32,72 @@ const EditIncident = (props) => {
   
 
   const {incidentid} = useParams();
+  const [editingIncident, setEditingIncident] = useState({})
+  const [fetchedData, setFetchedData] = useState(false);
 
-  // let editing_incident = null;
-  // incidentscontext.incidents.map(function(incident) {
-  //   if(incident._id === incidentid) {
-  //     editing_incident = incident;
-  //   }
-  // });
-  const editing_incident = incidentscontext.incidents.find(({_id}) => _id == incidentid)
+  useEffect(() => {
+    fetchData();
+}, []);
 
-  const [incidentDate, setIncidentDate] = useState(new Date(editing_incident.incident_date));
+async function fetchData() {
+  const options = {
+    method: 'GET',
+    headers: {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${usercontext.refreshToken} ${usercontext.accessToken}`
+    },
+  };
+
+  let get_incident_url = `http://localhost:3005/incidents/${incidentid}`
+  try {
+    let refreshed_access_token = false;
+    let errors = []
+    const response = await fetch(get_incident_url, options);
+    if (response.ok) {
+      const responseData = await response.json();
+      console.log(responseData);
+      setEditingIncident(responseData.incident);
+      setFetchedData(true)
+    } else {
+      const responseData = await response.json()
+      console.log(responseData)
+      // throw Error(response.json());
+      if (responseData.error && responseData.error === "EXPIRED_ACCESS_TOKEN") {
+                  
+        const refresh_access_token_url = 'http://127.0.0.1:3000/auth/token/refresh'
+        const refreshTokenResponse = await fetch(refresh_access_token_url, options);
+        
+        if(refreshTokenResponse.ok) {
+          
+            const responseData = await refreshTokenResponse.json();
+            console.log(responseData)
+            usercontext.setAccessToken(responseData.accessToken);
+            refreshed_access_token = true;
+        } else {
+            console.log("Error Refreshing Token")
+            errors.push({message: "Error Refreshing Token"})
+        }
+      } else {
+        console.log(responseData);
+        errors.push({message: "Error Fetching Incidents Data"})
+      }
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+  const [incidentDate, setIncidentDate] = useState(new Date());
   const incidentactions = [
     {
     type: 'ACTION',
-    description: editing_incident.action
+    description: editingIncident.action
   },
   {
     type: 'FURTHER_ACTION',
-    description: editing_incident.further_action
+    description: editingIncident.further_action
   } 
   ]
-
   function editIncidentHandler (event) {
     event.preventDefault();
     const targetElement = event.target.getAttribute("id");
@@ -144,118 +190,128 @@ const EditIncident = (props) => {
       });
   }
 
-  return (
-    <div className="wrapper">
-        <Header />
-        <Menu />
-        {/* Content Wrapper. Contains page content */}
-        <div className="content-wrapper">
-        <div classname="content-header">
-  <div className="container-fluid">
-    <div className="row mb-2">
-
-    </div>{/* /.row */}
-</div>
-</div>
-
-        <div className="content">
-      <div className="container-fluid">
-            <div className="wrapper"></div>
-
-        <div class="card mx-3">
-  <h5 class="card-header">Edit Incident<h3 className="mt-3">STATUS: {editing_incident.incident_status}</h3></h5>
-  <div class="card-body">
-  <form>
-                <div className="row">
-                  <div className="col">
-                  <label>Branch Code</label>
-                  <select class="form-select form-control" aria-label="Default select example" ref={branchRef}>
-                  <option value={editing_incident.branch_id}>{branchescontext.branches.find(({_id}) => _id == editing_incident.branch_id).branch_code}</option>
-                    {branchescontext.branches.map((branch) => {
-                      return branch.deleted == false ? <option value={branch.id}>{branch.branch_code}</option> : null
-                    })}
-                  </select>
-                  </div>
-                  <div className="col">
-                  <label>Reported by</label>
-                    <input type="text" className="form-control" defaultValue={editing_incident.reported_by} ref={alertedByRef}/>
-                  </div>
-                </div>
-                <div className="m-4">
-                  </div>
-                <div className="row">
-                  <div className="col">
-                  <label>Date</label>
-                    <DatePicker selected={incidentDate} onChange={(date) => setIncidentDate(date)} className="form-control"/>
-                  </div>
-                  <div className="col">
-                  <label>Incident Type</label>
-                    <select class="form-select form-control" aria-label="Default select example" ref={incidentTypeRef}>
-                      <option defaultValue={editing_incident.incident_type_id}>{incidenttypescontext.incident_types.find(({_id}) => _id == editing_incident.branch_id).branch_code}</option>
-                      {incidenttypescontext.incident_types.map((incident_type) => {
-                        return incident_type.deleted == false ?  <option value={incident_type.id}>{incident_type.incident_type}</option> : null
+  if (!fetchedData) {
+    return "isLoading"
+  } else {
+    return (
+      <div className="wrapper">
+          <Header />
+          <Menu />
+          {/* Content Wrapper. Contains page content */}
+          <div className="content-wrapper">
+          <div classname="content-header">
+    <div className="container-fluid">
+      <div className="row mb-2">
+  
+      </div>{/* /.row */}
+  </div>
+  </div>
+  
+          <div className="content">
+        <div className="container-fluid">
+              <div className="wrapper"></div>
+  
+          <div class="card mx-3">
+    <h5 class="card-header">Edit Incident<h3 className="mt-3">STATUS: {editingIncident.incident_status}</h3></h5>
+    <div class="card-body">
+    <form>
+                  <div className="row">
+                    <div className="col">
+                    <label>Branch Code</label>
+                    <select class="form-select form-control" aria-label="Default select example" ref={branchRef}>
+                    <option value={editingIncident.branch_id}>{branchescontext.branches.find(({_id}) => _id == editingIncident.branch_id).branch_code}</option>
+                      {branchescontext.branches.map((branch) => {
+                        return branch.deleted == false ? <option value={branch.id}>{branch.branch_code}</option> : null
                       })}
                     </select>
+                    </div>
+                    <div className="col">
+                    <label>Reported by</label>
+                      <input type="text" className="form-control" defaultValue={editingIncident.reported_by} ref={alertedByRef}/>
+                    </div>
                   </div>
-                </div>
-                <div className="m-5">
-                  </div>
+                  <div className="m-4">
+                    </div>
                   <div className="row">
-                  <div className="col">
-                    <label >Incident Description</label>
-                    <textarea type="text" className="form-control" placeholder="Incident Description" defaultValue={editing_incident.incident_description} ref={incidentDescriptionRef}/>
-                  </div>
-                </div>
-                <div className="incident_actions mb-4" ref={actionsRef}>
-                  {incidentactions.map(action => {
-                    return action.type === 'ACTION'
-                    ? <ActionComponent action_class="inc-action" action_label="Action" action ={action}/>
-                    : action.type === 'FURTHER_ACTION'
-                    ? <ActionComponent action_class="inc-action inc-further-action" action_label="Further Action" action ={action}/>
-                    : null
-                  })}     
-                </div>
-                <div className="mb-4"></div>
-                <div className="row ">
-                <div className="mr-auto">
-                  <button id="submitdraft" type="button" className="btn btn-primary" onClick={editIncidentHandler}>Save</button>
-                  <button id="submitapproval" type="button" className="ml-3 btn btn-success" onClick={editIncidentHandler}>Save and submit</button>
-                  <button id="delete_btn" type="button" className="ml-3 btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete_modal">Delete</button>
-                </div>
-                </div>
-              </form>
-
-              <div className="modal fade" id="delete_modal">
-                <div className="modal-dialog" role="document">
-                  <div className="modal-content">
-                    <div className="modal-header">
-                      <h5 className="modal-title">Delete Post</h5>
-                      <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true"></span>
-                      </button>
+                    <div className="col">
+                    <label>Date</label>
+                      <DatePicker 
+                          selected={incidentDate}
+                          onChange={(date) => setIncidentDate(date)}
+                          minDate={new Date(moment().subtract(1, 'months').format())}
+                          maxDate={new Date()}
+                          className="form-control"/>
                     </div>
-                    <div className="modal-body">
-                        <p>Are you sure you want to delete this post?</p>
-                    </div>
-                    <div className="modal-footer">
-                      <button className="btn btn btn-primary" onClick={deleteIncidentHandler}>Save changes</button>
-                      <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" data-target="#delete_modal">Close</button>
+                    <div className="col">
+                    <label>Incident Type</label>
+                      <select class="form-select form-control" aria-label="Default select example" ref={incidentTypeRef}>
+                        <option defaultValue={editingIncident.incident_type_id}>{incidenttypescontext.incident_types.find(({_id}) => _id === editingIncident.incident_type_id).incident_type}</option>
+                        {incidenttypescontext.incident_types.map((incident_type) => {
+                          return incident_type.deleted == false ?  <option value={incident_type.id}>{incident_type.incident_type}</option> : null
+                        })}
+                      </select>
                     </div>
                   </div>
+                  <div className="m-5">
+                    </div>
+                    <div className="row">
+                    <div className="col">
+                      <label >Incident Description</label>
+                      <textarea type="text" className="form-control" placeholder="Incident Description" defaultValue={editingIncident.incident_description} ref={incidentDescriptionRef}/>
+                    </div>
+                  </div>
+                  <div className="incident_actions mb-4" ref={actionsRef}>
+                    {incidentactions.map(action => {
+                      return action.type === 'ACTION'
+                      ? <ActionComponent action_class="inc-action" action_label="Action" action ={action}/>
+                      : action.type === 'FURTHER_ACTION'
+                      ? <ActionComponent action_class="inc-action inc-further-action" action_label="Further Action" action ={action}/>
+                      : null
+                    })}     
+                  </div>
+                  <div className="mb-4"></div>
+                  <div className="row ">
+                  <div className="mr-auto">
+                    <button id="submitdraft" type="button" className="btn btn-primary" onClick={editIncidentHandler}>Save</button>
+                    <button id="submitapproval" type="button" className="ml-3 btn btn-success" onClick={editIncidentHandler}>Save and submit</button>
+                    <button id="delete_btn" type="button" className="ml-3 btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete_modal">Delete</button>
+                  </div>
+                  </div>
+                </form>
+  
+                <div className="modal fade" id="delete_modal">
+                  <div className="modal-dialog" role="document">
+                    <div className="modal-content">
+                      <div className="modal-header">
+                        <h5 className="modal-title">Delete Post</h5>
+                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true"></span>
+                        </button>
+                      </div>
+                      <div className="modal-body">
+                          <p>Are you sure you want to delete this post?</p>
+                      </div>
+                      <div className="modal-footer">
+                        <button className="btn btn btn-primary" onClick={deleteIncidentHandler}>Save changes</button>
+                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" data-target="#delete_modal">Close</button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
+    </div>
+                  <div className="card-footer"> </div>
+                  </div>
+                  </div>
+                  </div>
+  
+  
               </div>
+  
+          <Footer />
   </div>
-                <div className="card-footer"> </div>
-                </div>
-                </div>
-                </div>
-
-
-            </div>
-
-        <Footer />
-</div>
-  );
+    );
+  }
+  
 };
 
 export default EditIncident;
