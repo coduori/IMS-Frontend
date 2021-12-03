@@ -93,22 +93,26 @@ const Menu = () => {
           </Link>
         </li>
         <li className="nav-item">
-          {/* {console.log(roles.find(({role_name}) => role_name == 'IMS_VIEW_REPORTS')._id)} */}
-          {/* {console.log(loggedInUserRoles.find(({role_id}) => role_id === "619f80f7ea72f8ecaa21c1d2"))} */}
-          {/* {loggedInUserRoles.map((userrole) => {
-            console.log(userrole)
-          })} */}
-
+          {roles.includes('IMS_RECORD_INCIDENTS')
+          || roles.includes('IMS_CHECK_INCIDENTS')
+          ?
+            <Link to="/manage-branch" className="nav-link">
+              <i className="nav-icon fas fa-th" />
+              <p>
+                Manage branches
+              </p>
+            </Link>
+          : null }
+        </li>
+        <li className="nav-item">
           {roles.includes('MAIN_MANAGE_BRANCHES')
           ?
-          <Link to="/manage-branch" className="nav-link">
-            <i className="nav-icon fas fa-th" />
-            <p>
-              Manage branches
-              {/* <span className="right badge badge-danger">New</span> */}
-            </p>
-          </Link>
-
+            <Link to="/manage-branch" className="nav-link">
+              <i className="nav-icon fas fa-th" />
+              <p>
+                Manage branches
+              </p>
+            </Link>
           : null }
         </li>
         <li className="nav-item">
@@ -118,19 +122,6 @@ const Menu = () => {
             <i className="nav-icon fas fa-th" />
             <p>
               Manage Incident Types
-              {/* <span className="right badge badge-danger">New</span> */}
-            </p>
-          </Link>
-        : null }
-          
-        </li>
-        <li className="nav-item">
-        {roles.includes('IMS_VIEW_USER_REPORTS')
-        ?
-          <Link to="/home" className="nav-link">
-            <i className="nav-icon fas fa-th" />
-            <p>
-              View Reports
             </p>
           </Link>
         : null }

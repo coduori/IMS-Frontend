@@ -1,4 +1,4 @@
-import {React, useEffect, useContext} from 'react';
+import {React, useEffect, useContext, useState} from 'react';
 import { useNavigate } from "react-router"
 import {Link} from 'react-router-dom'
 
@@ -17,12 +17,13 @@ const Home = (props) => {
   const incidentscontext = useContext(IncidentsContext);
   const incidenttypescontext = useContext(IncidentTypesContext);
   const branchescontext = useContext(BranchesContext);
+  const [roles, setRoles] = useState([]);
+  const [didLoadData, setDidLoadData] = useState(false);
 
   useEffect(() => {
     
     let did_refresh_access_token = false;
     let errors = []
-    const refreshed_access_token = null;
     let getIncidentsUrl = 'http://localhost:3005/incidents/getIncidentsView';
     async function fetchData() {
         const options = {
@@ -40,6 +41,16 @@ const Home = (props) => {
                 incidentscontext.setIncidents(responseData.incidentRecords);
                 branchescontext.setBranches(responseData.branches);
                 incidenttypescontext.setIncidentTypes(responseData.incident_types);
+
+                let get_user_roles_url = `http://localhost:3001/admin/users/roles`
+                const user_roles_response = await fetch(get_user_roles_url, options);
+                if (user_roles_response.ok) {
+                  const userRolesResponseData = await user_roles_response.json();
+                  setRoles(userRolesResponseData.roles)
+                  setDidLoadData(true);
+                } else {
+                  errors.push({message: "Error Fetching User Roles"})
+                }
             } else {
                 const responseData = await response.json();
                 console.log(responseData);
@@ -57,10 +68,7 @@ const Home = (props) => {
                   
                   if(refreshTokenResponse.ok) {
                       const responseData = await refreshTokenResponse.json();
-                      console.log(responseData)
                       usercontext.setAccessToken(responseData.accessToken);
-                      console.log(usercontext.accessToken)
-                      refreshed_access_token = responseData.accessToken
                       did_refresh_access_token = true;
                   } else {
                       console.log("Error Refreshing Token")
@@ -72,8 +80,7 @@ const Home = (props) => {
                 }
             }
         } catch (failedResponse) {
-          console.log("true")
-        // console.log(await failedResponse.data)
+        
         }
     }
 
@@ -93,40 +100,45 @@ const Home = (props) => {
   function approveIncident (incident_id) {
 
   }
-
-  return (
-    <div className="wrapper">  
-      <div>
-        <Header loggedInUser={props.loggedInUser}/>
-        <Menu />
-        <div className="content-wrapper"> {/* Content Wrapper. Contains page content */}
-          <div className="content-header">  {/* Content Header (Page header) */}
-            <div className="container-fluid">
-              <div className="row mb-2">
-                <div className="col-sm-12 mr-2">
-                  <Link to="/incident-entry">
-                    <button className="mt-2 btn btn-primary float-right">Record Incident</button>
-                  </Link>
-                </div>{/* /.col */}
-              </div>{/* /.row */}
+    if (!didLoadData) {
+        return "Loading"
+    } else {
+        return (
+            <div className="wrapper">  
+            <div>
+                <Header loggedInUser={props.loggedInUser}/>
+                <Menu />
+                <div className="content-wrapper"> {/* Content Wrapper. Contains page content */}
+                <div className="content-header">  {/* Content Header (Page header) */}
+                    <div className="container-fluid">
+                    <div className="row mb-2">
+                        <div className="col-sm-12 mr-2">
+                        {roles.includes('IMS_RECORD_INCIDENT')
+                        ?   <Link to="/incident-entry">
+                                <button className="mt-2 btn btn-primary float-right">Record Incident</button>
+                            </Link>
+                        : null }
+                        </div>{/* /.col */}
+                    </div>{/* /.row */}
+                    </div>
+                </div>
+                <div className="content"> {/* /.content-header */}  {/* Main content */}
+                    <div className="container-fluid">
+                    <div className="wrapper">
+                        <IncidentTable 
+                        incidentsData={incidentscontext.incidents}
+                        approveIncident={approveIncident}
+                        deleteIncident={deleteIncident}
+                        />
+                    </div>
+                    </div>  {/* /.container-fluid */}
+                </div>  {/* /.content */}
+                </div>  {/* /.content-wrapper */}
+                <Footer />
             </div>
-          </div>
-          <div className="content"> {/* /.content-header */}  {/* Main content */}
-            <div className="container-fluid">
-              <div className="wrapper">
-                <IncidentTable 
-                incidentsData={incidentscontext.incidents}
-                approveIncident={approveIncident}
-                deleteIncident={deleteIncident}
-                />
-              </div>
-            </div>  {/* /.container-fluid */}
-          </div>  {/* /.content */}
-        </div>  {/* /.content-wrapper */}
-        <Footer />
-      </div>
-    </div>
-  )
+            </div>
+        )
+    }
 }
 
 export default Home

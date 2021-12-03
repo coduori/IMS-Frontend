@@ -51,7 +51,6 @@ function IncidentTableRow (props) {
             return (
             <>
             <Link to={`/edit-incident/${incident._id}`}>
-                {/* <button type="button" className="btn btn-xs btn-primary ">Edit</button> */}
                 <Button className= {`ml-3`} text="Edit" intent="success"/>
             </Link>
             <Popover2
@@ -76,7 +75,7 @@ function IncidentTableRow (props) {
             return (
                 <>
                 <Link to={`/view-incident/${incident._id}`}>
-                    <button type="button" className="btn btn-xs btn-primary ">View</button>
+                    <Button className= {`ml-3`} text="View" intent="success"/>
                 </Link>
                 </>
             )
@@ -84,45 +83,42 @@ function IncidentTableRow (props) {
             return (
                 <>
                 <Link to={`/view-incident/${incident._id}`}>
-                    <button type="button" className="btn btn-xs btn-primary ">View</button>
+                    <Button className= {`ml-3`} text="View" intent="success"/>
                 </Link>
 
                 <Popover2
-                interactionKind="click"
-                popoverClassName={Classes.POPOVER2_CONTENT_SIZING}
-                placement="bottom"
-                content={
-                    <div>
-                        <h5>Close</h5>
-                        <p>Are you sure you want to close this incident</p>
-                        <FormGroup
-                            label="Close comments:"
-                            labelFor="close-comment-input"
-                            inline={true}
-                        >
-                            <InputGroup id="close-comment-input"
-                                        placeholder="Close Message"
-                                        inputRef={closeCommentRef}/>
-                        </FormGroup>
+                    interactionKind="click"
+                    popoverClassName={Classes.POPOVER2_CONTENT_SIZING}
+                    placement="bottom"
+                    content={
+                        <div>
+                            <h5>Close</h5>
+                            <p>Are you sure you want to close this incident</p>
+                            <FormGroup
+                                label="Close comments:"
+                                labelFor="close-comment-input"
+                                inline={true}
+                            >
+                                <InputGroup id="close-comment-input"
+                                            placeholder="Close Message"
+                                            inputRef={closeCommentRef}/>
+                            </FormGroup>
 
-                        <Button className= {`ml-3 ${Classes.POPOVER2_DISMISS}` } text="Close" onClick={closeIncidentHandler} intent="success"/>
-                        <Button className= {`ml-3 ${Classes.POPOVER2_DISMISS}` } text="Dismiss" intent="secondary"/>
-                    </div>
-                }
-                renderTarget={({ isOpen, ref, ...targetProps }) => (
-                    <Button {...targetProps} elementRef={ref} intent="success" text="Close" className= {`ml-3` } small={true}/>
-                )}
-            />
-                <Link to="/edit-incident">
-                    <button type="button" className="btn btn-xs btn-primary ">Close</button>
-                </Link>
+                            <Button className= {`ml-3 ${Classes.POPOVER2_DISMISS}` } text="Close" onClick={closeIncidentHandler} intent="success"/>
+                            <Button className= {`ml-3 ${Classes.POPOVER2_DISMISS}` } text="Dismiss" intent="secondary"/>
+                        </div>
+                    }
+                    renderTarget={({ isOpen, ref, ...targetProps }) => (
+                        <Button {...targetProps} elementRef={ref} intent="success" text="Close" className= {`ml-3` } small={true}/>
+                    )}
+                />
                 </>
             )
         } else if (status === 'CLOSED') {
             return (
                 <>
                 <Link to={`/view-incident/${incident._id}`}>
-                <button type="button" className="btn btn-xs btn-primary ">View</button>
+                    <Button className= {`ml-3`} text="View" intent="success"/>
                 </Link>
                 </>
             )

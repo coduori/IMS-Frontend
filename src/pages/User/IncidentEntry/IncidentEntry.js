@@ -8,7 +8,6 @@ import Menu from '../../../components/Menu'
 import ActionComponent from '../../../components/Incidents/ActionComponent'
 
 import UserContext from '../../../store/UserContext';
-import IncidentsContext from "../../../store/IncidentsContext";
 import IncidentTypesContext from '../../../store/IncidentTypesContext';
 import BranchesContext from '../../../store/BranchesContext';
 
@@ -18,7 +17,6 @@ import "react-datepicker/dist/react-datepicker.css";
 const IncidentEntry = () => {
   const navigate = useNavigate();
   const usercontext = useContext(UserContext);
-  const incidentscontext = useContext(IncidentsContext);
   const incidenttypescontext = useContext(IncidentTypesContext);
   const branchescontext = useContext(BranchesContext);
 
