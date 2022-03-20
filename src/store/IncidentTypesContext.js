@@ -10,10 +10,11 @@ const IncidentTypesContext = createContext({
 export function IncidentTypesContextProvider (props) {
 
     const [incidentTypes, setIncidentTypes] = useState([]);
+    
+    const setIncidentTypesHandler = incidentTypes => {
+      setIncidentTypes(incidentTypes);
+    };
 
-    function setIncidentTypesHandler (incidentTypes) {
-        setIncidentTypes(incidentTypes);
-    }
 
     const context = {
         incident_types: incidentTypes,
