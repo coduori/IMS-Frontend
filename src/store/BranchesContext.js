@@ -1,30 +1,27 @@
-import {createContext, useState} from 'react';
-// import {useCookies} from 'react-cookie';
-
+import { createContext, useState } from "react";
 
 const BranchesContext = createContext({
-    branches: [],
-    setBranches:(branches) => {},
+  branches: [],
+  setBranches: branches => {},
 });
 
-export function BranchesContextProvider (props) {
+export const BranchesContextProvider = props => {
+  const [branches, setBranches] = useState([]);
 
-    const [branches, setBranches] = useState([]);
+  const setBranchesHandler = branches => {
+    setBranches(branches);
+  };
 
-    function setBranchesHandler (branches) {
-        setBranches(branches);
-    }
+  const context = {
+    branches: branches,
+    setBranches: setBranchesHandler,
+  };
 
-    const context = {
-        branches: branches,
-        setBranches: setBranchesHandler,
-    }
-
-    return (
-        <BranchesContext.Provider value={context}>
-            {props.children}
-        </BranchesContext.Provider>
-    );
-}
+  return (
+    <BranchesContext.Provider value={context}>
+      {props.children}
+    </BranchesContext.Provider>
+  );
+};
 
 export default BranchesContext;

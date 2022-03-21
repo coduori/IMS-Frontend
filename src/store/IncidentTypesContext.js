@@ -1,31 +1,27 @@
-import {createContext, useState} from 'react';
-// import {useCookies} from 'react-cookie';
-
+import { createContext, useState } from "react";
 
 const IncidentTypesContext = createContext({
-    incident_types: [],
-    setIncidentTypes:(incidentTypes) => {},
+  incident_types: [],
+  setIncidentTypes: incidentTypes => {},
 });
 
-export function IncidentTypesContextProvider (props) {
+export const IncidentTypesContextProvider = props => {
+  const [incidentTypes, setIncidentTypes] = useState([]);
 
-    const [incidentTypes, setIncidentTypes] = useState([]);
-    
-    const setIncidentTypesHandler = incidentTypes => {
-      setIncidentTypes(incidentTypes);
-    };
+  const setIncidentTypesHandler = incidentTypes => {
+    setIncidentTypes(incidentTypes);
+  };
 
+  const context = {
+    incident_types: incidentTypes,
+    setIncidentTypes: setIncidentTypesHandler,
+  };
 
-    const context = {
-        incident_types: incidentTypes,
-        setIncidentTypes: setIncidentTypesHandler,
-    }
-
-    return (
-        <IncidentTypesContext.Provider value={context}>
-            {props.children}
-        </IncidentTypesContext.Provider>
-    );
-}
+  return (
+    <IncidentTypesContext.Provider value={context}>
+      {props.children}
+    </IncidentTypesContext.Provider>
+  );
+};
 
 export default IncidentTypesContext;
