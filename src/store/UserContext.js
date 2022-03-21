@@ -8,18 +8,7 @@ const authInitialState = {
   accessToken: localStorage.getItem("accessToken") || null,
 };
 
-const context = {
-  isLoggedIn: isLoggedIn,
-  name: userName,
-  email: userEmail,
-  refreshToken: refreshToken,
-  accessToken: accessToken,
-  setUserName: setUserNameHandler,
-  setEmail: setUserEmailHandler,
-  setIsLoggedIn: setisLoggedInHandler,
-  setRefreshToken: setRefreshTokenHandler,
-  setAccessToken: setAccessTokenHandler,
-};
+
 
 const UserContext = createContext(authInitialState);
 const authReducer = (prevState, newState) => {
@@ -40,6 +29,18 @@ const authReducer = (prevState, newState) => {
 };
 
 export const UserContextProvider = props => {
+  const context = {
+    isLoggedIn: authState.isLoggedIn,
+    name: authState.name,
+    email: authState.email,
+    refreshToken: authState.refreshToken,
+    accessToken: authState.accessToken,
+    setUserName: setUserNameHandler,
+    setEmail: setUserEmailHandler,
+    setIsLoggedIn: setisLoggedInHandler,
+    setRefreshToken: setRefreshTokenHandler,
+    setAccessToken: setAccessTokenHandler,
+  };
   const [authState, dispatchAuth] = useReducer(authReducer, authInitialState);
   const setisLoggedInHandler = loggedIn => {
     dispatchAuth({ type: "LOGIN_STATUS", isLoggedIn: loggedIn });
